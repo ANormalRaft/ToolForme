@@ -1,0 +1,7 @@
+{
+  "key.categories.toolforme.toolformecategory": "Tool Forme",
+  "key.toolforme.changeforme": "Tool Forme Activation",
+  "my_mod.networking.failed": "itemstack sync attempt failed",
+  "my_mod.networking.failedformeplayercooldown": "Forme Player Cooldown failed to sync",
+  "my_mod.networking.failedformeitemtimercooldown": "Item Timer failed to sync"
+}
