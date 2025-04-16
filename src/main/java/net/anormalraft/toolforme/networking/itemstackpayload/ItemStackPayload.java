@@ -2,6 +2,7 @@ package net.anormalraft.toolforme.networking.itemstackpayload;
 
 import io.netty.buffer.ByteBuf;
 import net.anormalraft.toolforme.ToolForme;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -13,8 +14,8 @@ public record ItemStackPayload(ItemStack itemStack) implements CustomPacketPaylo
 
     public static final CustomPacketPayload.Type<ItemStackPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("toolforme", "itemstackpayload"));
 
-    public static final StreamCodec<ByteBuf, ItemStackPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.fromCodec(ItemStack.CODEC),
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackPayload> STREAM_CODEC = StreamCodec.composite(
+            ItemStack.STREAM_CODEC,
             ItemStackPayload::itemStack,
             ItemStackPayload::new
     );

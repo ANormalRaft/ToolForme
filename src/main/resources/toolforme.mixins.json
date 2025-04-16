@@ -3,10 +3,11 @@
   "package": "net.anormalraft.toolforme.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ItemStackMixin"
+    "SlotMixin",
+    "InventoryMixin",
+    "TridentMixin"
   ],
   "client": [
-
   ],
   "injectors": {
     "defaultRequire": 1

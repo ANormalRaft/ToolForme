@@ -14,20 +14,25 @@ import net.anormalraft.toolforme.networking.itemstackpayload.ClientItemStackPayl
 import net.anormalraft.toolforme.networking.itemstackpayload.ItemStackPayload;
 import net.anormalraft.toolforme.networking.itemstackpayload.ServerItemStackPayloadHandler;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -185,12 +190,23 @@ public class ToolForme {
                     formeChangeItem.set(PREVIOUS_ITEM_DATA.value(), previousItemData);
                     formeChangeItem.set(FORME_BOOL.value(), formeBool);
 
-                    //Data attachment of the item's timer. Both the client and server need to be notified
-                    player.setData(FORMEITEMTIMER, itemTimerValue);
-                    PacketDistributor.sendToServer(new FormeItemTimerPayload(itemTimerValue + 1));
+                    //Modify stats
+                    double previousAttackDamageValue = previousItemData.value().getAttributeModifiers().modifiers().stream().filter(attributeEntry -> attributeEntry.modifier().is(ResourceLocation.parse("minecraft:base_attack_damage"))).findFirst().get().modifier().amount();
+
+                    ItemAttributeModifiers itemAttributeModifiers =  formeChangeItem.getAttributeModifiers().withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.parse("minecraft:base_attack_damage"),previousAttackDamageValue * 1.2 , AttributeModifier.Operation.ADD_VALUE),
+                            EquipmentSlotGroup.MAINHAND);
+
+                    formeChangeItem.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributeModifiers);
+
+                    //Apply existing enchantments
+                    EnchantmentHelper.setEnchantments(formeChangeItem, previousItemData.value().getTagEnchantments());
 
                     //Send the item swap request to the server
                     PacketDistributor.sendToServer(new ItemStackPayload(formeChangeItem));
+
+                    //Data attachment of the item's timer. Both the client and server need to be notified
+                    player.setData(FORMEITEMTIMER, itemTimerValue);
+                    PacketDistributor.sendToServer(new FormeItemTimerPayload(itemTimerValue + 1));
 
                     //Data attachment of the player's cooldown. Both the client and server need to be notified
                     player.setData(FORMEPLAYERCOOLDOWN, 160);
@@ -285,4 +301,12 @@ public class ToolForme {
         event.getDispatcher().register(ModCommands.resetPlayer);
         event.getDispatcher().register(ModCommands.revertItem);
     }
+
+//    @SubscribeEvent
+//    //Prevent Forme changed item toss
+//    public void onItemToss(ItemTossEvent event){
+//        if(event.getEntity().getItem().has(PREVIOUS_ITEM_DATA.value())){
+//            event.setCanceled(true);
+//        }
+//    }
 }

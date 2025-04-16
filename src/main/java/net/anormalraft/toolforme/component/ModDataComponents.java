@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -37,8 +38,8 @@ public class ModDataComponents {
             ByteBufCodecs.BOOL, FormeBoolRecord::value,
             FormeBoolRecord::new
     );
-    public static final StreamCodec<ByteBuf, PreviousItemData> PREVIOUS_ITEM_STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.fromCodec(ItemStack.CODEC), PreviousItemData::value,
+    public static final StreamCodec<RegistryFriendlyByteBuf, PreviousItemData> PREVIOUS_ITEM_STREAM_CODEC = StreamCodec.composite(
+            ItemStack.STREAM_CODEC, PreviousItemData::value,
             PreviousItemData::new
     );
 

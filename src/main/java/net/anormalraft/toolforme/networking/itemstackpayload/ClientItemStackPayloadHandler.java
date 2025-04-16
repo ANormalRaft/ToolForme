@@ -5,6 +5,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+//Unused
 public class ClientItemStackPayloadHandler {
     public static void handleDataOnNetwork(final ItemStackPayload formeChangeItemStackPayload, IPayloadContext context){
         // Do something with the data, on the main thread
