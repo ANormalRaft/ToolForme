@@ -13,20 +13,23 @@ import net.anormalraft.toolforme.networking.formeplayercooldownpayload.ServerFor
 import net.anormalraft.toolforme.networking.itemstackpayload.ClientItemStackPayloadHandler;
 import net.anormalraft.toolforme.networking.itemstackpayload.ItemStackPayload;
 import net.anormalraft.toolforme.networking.itemstackpayload.ServerItemStackPayloadHandler;
+import net.anormalraft.toolforme.sound.Sounds;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
@@ -55,8 +58,6 @@ import net.neoforged.neoforge.common.util.Lazy;
 import net.minecraft.world.item.Item;
 
 
-import javax.annotation.processing.SupportedSourceVersion;
-import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 //import static net.anormalraft.toolforme.component.ModDataComponents.FORME_TIMER;
@@ -95,6 +96,8 @@ public class ToolForme {
         ModDataComponents.REGISTRAR.register(modEventBus);
         //Attachments
         ATTACHMENT_TYPES.register(modEventBus);
+        //Sounds
+        Sounds.SOUND_EVENTS.register(modEventBus);
     }
 
     //Register my Keybind
@@ -200,6 +203,17 @@ public class ToolForme {
 
                     //Apply existing enchantments
                     EnchantmentHelper.setEnchantments(formeChangeItem, previousItemData.value().getTagEnchantments());
+
+                    //Apply custom name
+                    formeChangeItem.set(DataComponents.CUSTOM_NAME, previousItemData.value().getComponents().get(DataComponents.CUSTOM_NAME));
+
+                    //Make unbreakable
+                    formeChangeItem.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
+
+                    //Make a sound
+                    ResourceLocation rl = ResourceLocation.tryParse("toolforme:up_sound");
+                    SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
+                    player.playSound(soundEvent, 0.7f, 1f);
 
                     //Send the item swap request to the server
                     PacketDistributor.sendToServer(new ItemStackPayload(formeChangeItem));

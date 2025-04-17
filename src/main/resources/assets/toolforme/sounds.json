@@ -1,0 +1,9 @@
+{
+  "up_sound": {
+    "sounds": [
+      {
+        "name": "toolforme:up"
+      }
+    ]
+  }
+}

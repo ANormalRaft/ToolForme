@@ -26,7 +26,7 @@ public class ModCommands {
 
     public static LiteralArgumentBuilder<CommandSourceStack> checkPlayer = root.then(Commands.literal("check").then(Commands.argument("player", EntityArgument.player()).executes(ctx -> displayToolFormeValuesCheck(EntityArgument.getPlayer(ctx, "player")))));
 
-    public static LiteralArgumentBuilder<CommandSourceStack> resetPlayer = root.then(Commands.literal("reset").then(Commands.argument("player", EntityArgument.player()).executes(ctx -> resetPlayerData(EntityArgument.getPlayer(ctx, "player")))));
+    public static LiteralArgumentBuilder<CommandSourceStack> resetPlayer = root.then(Commands.literal("playerReset").then(Commands.argument("player", EntityArgument.player()).executes(ctx -> resetPlayerData(EntityArgument.getPlayer(ctx, "player")))));
 
     public static LiteralArgumentBuilder<CommandSourceStack> revertItem = root.then(Commands.literal("revert").executes(ctx -> revertFormeItem(ctx.getSource().getPlayer())));
 
@@ -47,13 +47,18 @@ public class ModCommands {
     }
 
     private static int revertFormeItem(Player player){
-        ItemStack mainhandItem = player.getMainHandItem();
-        if(player.getMainHandItem().has(PREVIOUS_ITEM_DATA)){
-            ModDataComponents.PreviousItemData itemData = mainhandItem.getComponents().get(PREVIOUS_ITEM_DATA.value());
-            //Set the itemstack
-            player.setItemSlot(EquipmentSlot.MAINHAND, itemData.value());
-        } else {
-            player.displayClientMessage(Component.literal("No item with PREVIOUS_ITEM_DATA in mainhand detected"), false);
+        boolean foundFormeItem = false;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack itemStack = player.getSlot(i).get();
+            if (itemStack.has(PREVIOUS_ITEM_DATA)) {
+                foundFormeItem = true;
+                ModDataComponents.PreviousItemData itemData = itemStack.getComponents().get(PREVIOUS_ITEM_DATA.value());
+                //Set the itemstack
+                player.getSlot(i).set(itemData.value());
+            }
+        }
+        if(!foundFormeItem){
+            player.displayClientMessage(Component.literal("No item with PREVIOUS_ITEM_DATA found in inventory!"), false);
         }
         return 1;
     }

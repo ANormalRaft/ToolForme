@@ -5,7 +5,8 @@
   "mixins": [
     "SlotMixin",
     "InventoryMixin",
-    "TridentMixin"
+    "TridentMixin",
+    "ThrownTridentMixin"
   ],
   "client": [
   ],
