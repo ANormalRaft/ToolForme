@@ -183,7 +183,6 @@ public class ToolForme {
         //Data to add (the .copy() is important, or else you get stackoverflow)
         ModDataComponents.PreviousItemData previousItemData = new ModDataComponents.PreviousItemData(itemStack.copy());
         ModDataComponents.FormeBoolRecord formeBool = new ModDataComponents.FormeBoolRecord(true);
-        int itemTimerValue = Config.formePlayerCooldown;
         //Put Forme item in mainhand with the new Component Data
         Config.bindingsHashMap.forEach((key,itemArray) -> {
             for(Item item : itemArray) {
@@ -219,12 +218,14 @@ public class ToolForme {
                     PacketDistributor.sendToServer(new ItemStackPayload(formeChangeItem));
 
                     //Data attachment of the item's timer. Both the client and server need to be notified
+                    int itemTimerValue = Config.formeTimer;
                     player.setData(FORMEITEMTIMER, itemTimerValue);
                     PacketDistributor.sendToServer(new FormeItemTimerPayload(itemTimerValue + 1));
 
                     //Data attachment of the player's cooldown. Both the client and server need to be notified
-                    player.setData(FORMEPLAYERCOOLDOWN, 160);
-                    PacketDistributor.sendToServer(new FormePlayerCooldownPayload(161));
+                    int playerCooldown = Config.formePlayerCooldown;
+                    player.setData(FORMEPLAYERCOOLDOWN, playerCooldown);
+                    PacketDistributor.sendToServer(new FormePlayerCooldownPayload(playerCooldown + 1));
 
                     //Set the forme control boolean to true
                     isFormeActive = true;
@@ -262,6 +263,7 @@ public class ToolForme {
                         //Forme timer here so that the timer doesn't go into further negative numbers and to lock the player missing their item
                         player.setData(FORMEITEMTIMER, itemCooldown - 1);
                         PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown));
+
                         System.out.println("PlayerTick: " + player.getData(FORMEITEMTIMER));
                         System.out.println("Goal Reached");
                         return;

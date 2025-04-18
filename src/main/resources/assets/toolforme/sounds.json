@@ -5,5 +5,19 @@
         "name": "toolforme:up"
       }
     ]
+  },
+  "down_sound":{
+    "sounds": [
+      {
+        "name": "toolforme:down"
+      }
+    ]
+  },
+  "flash_sound":{
+    "sounds": [
+      {
+        "name": "toolforme:flash"
+      }
+    ]
   }
 }

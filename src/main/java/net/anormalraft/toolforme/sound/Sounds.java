@@ -14,4 +14,14 @@ public class Sounds {
             "up_sound", // must match the resource location on the next line
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("toolforme", "up_sound"))
     );
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> DOWN_SOUND = SOUND_EVENTS.register(
+            "down_sound", // must match the resource location on the next line
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("toolforme", "down_sound"))
+    );
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLASH_SOUND = SOUND_EVENTS.register(
+            "flash_sound", // must match the resource location on the next line
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("toolforme", "flash_sound"))
+    );
 }
