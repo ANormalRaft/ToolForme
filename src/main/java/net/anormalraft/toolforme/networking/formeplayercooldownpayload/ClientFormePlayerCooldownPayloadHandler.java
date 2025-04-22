@@ -9,8 +9,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import static net.anormalraft.toolforme.ToolForme.FORMEITEMTIMER;
-import static net.anormalraft.toolforme.ToolForme.FORMEPLAYERCOOLDOWN;
+import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
 
 public class ClientFormePlayerCooldownPayloadHandler {
     public static void handleDataOnNetwork(final FormePlayerCooldownPayload formePlayerCooldownPayload, IPayloadContext context){

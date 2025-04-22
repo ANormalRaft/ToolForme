@@ -8,8 +8,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import static net.anormalraft.toolforme.ToolForme.FORMEITEMTIMER;
-import static net.anormalraft.toolforme.ToolForme.FORMEPLAYERCOOLDOWN;
+import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
 
 public class ClientFormeItemTimerPayloadHandler {
     public static void handleDataOnNetwork(final FormeItemTimerPayload formeItemTimerPayload, IPayloadContext context){

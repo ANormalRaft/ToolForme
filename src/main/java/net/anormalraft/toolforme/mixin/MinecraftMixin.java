@@ -1,36 +1,55 @@
 package net.anormalraft.toolforme.mixin;
 
+import com.mojang.blaze3d.platform.WindowEventHandler;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShieldItem;
+import net.neoforged.neoforge.client.extensions.IMinecraftExtension;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 
-import static net.anormalraft.toolforme.component.ModDataComponents.PREVIOUS_ITEM_DATA;
-
 @Mixin(Minecraft.class)
-public abstract class MinecraftMixin {
+public abstract class MinecraftMixin extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler, IMinecraftExtension {
 
     @Shadow @Nullable public LocalPlayer player;
 
     @Shadow @Nullable public MultiPlayerGameMode gameMode;
 
+    @Shadow @Final public Options options;
+
+    public MinecraftMixin(String name) {
+        super(name);
+    }
+
+    @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 2))
+    public boolean stepIntoKeyUseCheck(KeyMapping instance){
+        return false;
+    }
+
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;releaseUsingItem(Lnet/minecraft/world/entity/player/Player;)V"))
     public void denyUseItemCancel(MultiPlayerGameMode instance, Player player){
-        if(!(player.isCrouching() && player.getUseItem().getItem() instanceof ShieldItem)){
+        if(player.isCrouching()){
+            if(!(player.getUseItem().getItem() instanceof ShieldItem)) {
+                if(!this.options.keyUse.isDown()) {
+                    instance.releaseUsingItem(player);
+                }
+            }
+        } else if(!(player.getUseItem().getItem() instanceof ShieldItem)) {
+            if(!this.options.keyUse.isDown()) {
+                instance.releaseUsingItem(player);
+            }
+        } else {
             instance.releaseUsingItem(player);
         }
     }

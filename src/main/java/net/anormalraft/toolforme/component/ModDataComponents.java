@@ -3,12 +3,17 @@ package net.anormalraft.toolforme.component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import net.anormalraft.toolforme.Config;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -61,6 +66,18 @@ public class ModDataComponents {
                     // The codec to read/write the data across the network
                     .networkSynchronized(PREVIOUS_ITEM_STREAM_CODEC)
     );
+
+    //Performs the work of searching for all items specified by the config and adding the FORME_BOOL component in them
+    public static void modifyComponents(ModifyDefaultComponentsEvent event) {
+        Config.bindingsHashMap.forEach((key, itemArray) -> {
+            for(Item item : itemArray) {
+                Item searchedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item.toString()));
+                event.modify(searchedItem, builder ->
+                        builder.set(FORME_BOOL.value(), new ModDataComponents.FormeBoolRecord(true))
+                );
+            }
+        });
+    }
 }
     
 

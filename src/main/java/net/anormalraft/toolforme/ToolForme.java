@@ -1,19 +1,13 @@
 package net.anormalraft.toolforme;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.serialization.Codec;
-import net.anormalraft.toolforme.command.ModCommands;
+import net.anormalraft.toolforme.attachment.ModAttachments;
 import net.anormalraft.toolforme.component.ModDataComponents;
-import net.anormalraft.toolforme.networking.formeitemtimerpayload.ClientFormeItemTimerPayloadHandler;
+import net.anormalraft.toolforme.networking.PayloadHousekeeping;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
-import net.anormalraft.toolforme.networking.formeitemtimerpayload.ServerFormeItemTimerPayloadHandler;
-import net.anormalraft.toolforme.networking.formeplayercooldownpayload.ClientFormePlayerCooldownPayloadHandler;
 import net.anormalraft.toolforme.networking.formeplayercooldownpayload.FormePlayerCooldownPayload;
-import net.anormalraft.toolforme.networking.formeplayercooldownpayload.ServerFormePlayerCooldownPayloadHandler;
-import net.anormalraft.toolforme.networking.itemstackpayload.ClientItemStackPayloadHandler;
 import net.anormalraft.toolforme.networking.itemstackpayload.ItemStackPayload;
-import net.anormalraft.toolforme.networking.itemstackpayload.ServerItemStackPayloadHandler;
-import net.anormalraft.toolforme.sound.Sounds;
+import net.anormalraft.toolforme.sound.ModSounds;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -31,20 +25,12 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
-import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
@@ -58,10 +44,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.minecraft.world.item.Item;
 
-
-import java.util.function.Supplier;
-
-//import static net.anormalraft.toolforme.component.ModDataComponents.FORME_TIMER;
+import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
+import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
 import static net.anormalraft.toolforme.component.ModDataComponents.FORME_BOOL;
 import static net.anormalraft.toolforme.component.ModDataComponents.PREVIOUS_ITEM_DATA;
 
@@ -80,15 +64,16 @@ public class ToolForme {
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public ToolForme(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for mod loading
-//        modEventBus.addListener(this::commonSetup);
+        //Listener for Custom Keybind
         modEventBus.addListener(this::registerBindings);
-        modEventBus.addListener(this::modifyComponents);
-        modEventBus.addListener(this::registerPayload);
+        //Listener for Default Item Component injection
+        modEventBus.addListener(ModDataComponents::modifyComponents);
+        //Listener for Payloads
+        modEventBus.addListener(PayloadHousekeeping::registerPayload);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ToolForme) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
+        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class
         NeoForge.EVENT_BUS.register(this);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
@@ -96,55 +81,16 @@ public class ToolForme {
         //Components
         ModDataComponents.REGISTRAR.register(modEventBus);
         //Attachments
-        ATTACHMENT_TYPES.register(modEventBus);
+        ModAttachments.ATTACHMENT_TYPES.register(modEventBus);
         //Sounds
-        Sounds.SOUND_EVENTS.register(modEventBus);
+        ModSounds.SOUND_EVENTS.register(modEventBus);
+
+        //ModCommands and ModAttachments have been tagged with @EventBusSubscriber (replaces Neoforge.EVENT_BUS.register)
     }
 
     //Register my Keybind
     public void registerBindings(RegisterKeyMappingsEvent event) {
         event.register(KEY_MAPPING.get());
-    }
-
-    //Register Payloads
-    public void registerPayload(final RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar("1");
-        registrar.playBidirectional(
-                ItemStackPayload.TYPE,
-                ItemStackPayload.STREAM_CODEC,
-                new DirectionalPayloadHandler<ItemStackPayload>(
-                        ClientItemStackPayloadHandler::handleDataOnNetwork,
-                        ServerItemStackPayloadHandler::handleDataOnNetwork
-                )
-        );
-        registrar.playBidirectional(
-                FormePlayerCooldownPayload.TYPE,
-                FormePlayerCooldownPayload.STREAM_CODEC,
-                new DirectionalPayloadHandler<FormePlayerCooldownPayload>(
-                        ClientFormePlayerCooldownPayloadHandler::handleDataOnNetwork,
-                        ServerFormePlayerCooldownPayloadHandler::handleDataOnNetwork
-                )
-        );
-        registrar.playBidirectional(
-                FormeItemTimerPayload.TYPE,
-                FormeItemTimerPayload.STREAM_CODEC,
-                new DirectionalPayloadHandler<FormeItemTimerPayload>(
-                        ClientFormeItemTimerPayloadHandler::handleDataOnNetwork,
-                        ServerFormeItemTimerPayloadHandler::handleDataOnNetwork
-                )
-        );
-    }
-
-    //Default Item Component injection
-    public void modifyComponents(ModifyDefaultComponentsEvent event) {
-        Config.bindingsHashMap.forEach((key,itemArray) -> {
-            for(Item item : itemArray) {
-                Item searchedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item.toString()));
-                event.modify(searchedItem, builder ->
-                        builder.set(FORME_BOOL.value(), new ModDataComponents.FormeBoolRecord(true))
-                );
-            }
-        });
     }
 
     // Fire when pressing the mod's keybind. Event is on the NeoForge event bus only on the physical client
@@ -179,7 +125,7 @@ public class ToolForme {
         }
     }
 
-    //Finds the corresponding item according to the config, puts it into the player's slot and attaches data components to the item and data attachments to the player to handle the timing of the item
+    //Helper Method that finds the corresponding item according to the config, puts it into the player's slot and attaches data components to the item and data attachments to the player to handle the timing of the item
     public void findItemAndApplyDataComponents(ItemStack itemStack, Player player){
         //Data to add (the .copy() is important, or else you get stackoverflow)
         ModDataComponents.PreviousItemData previousItemData = new ModDataComponents.PreviousItemData(itemStack.copy());
@@ -236,19 +182,26 @@ public class ToolForme {
         });
     }
 
+    //Cancels the use of the shield on right click
     @SubscribeEvent
+    public void onPlayerInteractRightClick(PlayerInteractEvent.RightClickItem event){
+        if(event.getItemStack().getItem() instanceof ShieldItem){
+            event.setCanceled(true);
+        }
+    }
+
     //This event fires on both the client and server side. We want to check on which side it is fired on first by checking the level using a neoforge isClientSide method. Responsible for reverting to the original item upon timer expiration, and counting down timers
+    @SubscribeEvent
     public void onPlayerTickEvent(PlayerTickEvent.Pre event){
         //If we are on the server-sided event
         if(!event.getEntity().level().isClientSide) {
             Player player = event.getEntity();
             ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
 
-            //Shield section
+            //Shield section (part of the code responsible for enabling shield on crouch. The rest is in MinecraftMixin)
             ItemStack offhandItem = player.getOffhandItem();
             ItemStack mainhandItem = player.getMainHandItem();
             if (player.isCrouching() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
-//                System.out.println(!player.getUseItem().isEmpty());
                 //Offhand has priority
                 if (offhandItem.getItem() instanceof ShieldItem) {
                     if (!(player.getUseItem() == offhandItem)) {
@@ -283,9 +236,8 @@ public class ToolForme {
                         //Forme timer here so that the timer doesn't go into further negative numbers and to lock the player missing their item
                         player.setData(FORMEITEMTIMER, itemCooldown - 1);
                         PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown));
-
-                        System.out.println("PlayerTick: " + player.getData(FORMEITEMTIMER));
-                        System.out.println("Goal Reached");
+//                        System.out.println("PlayerTick: " + player.getData(FORMEITEMTIMER));
+//                        System.out.println("Goal Reached");
                         return;
                     }
                 }
@@ -297,52 +249,4 @@ public class ToolForme {
             }
         }
     }
-
-    @SubscribeEvent
-    //Sync Data Attachments to the Player on login. Thanks Gauner on the Neoforge discord, who went through this bullshit before I
-    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
-        Player player = event.getEntity();
-        ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
-        int formePlayerCooldown = player.getData(FORMEPLAYERCOOLDOWN);
-
-        //Send FormePlayerCooldown data to the client
-        PacketDistributor.sendToPlayer(serverPlayer, new FormePlayerCooldownPayload(formePlayerCooldown));
-
-        //Send FormeItemTimer data to both the client and the server(?). If your timer de-syncs, then it is here that you would put 0 and -1 respectively. Added a first join check
-        if(player.hasData(FORMEITEMTIMER)) {
-            int itemCooldown = player.getData(FORMEITEMTIMER);
-            PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown + 1));
-            player.setData(FORMEITEMTIMER, itemCooldown);
-        } else {
-            PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(0));
-            player.setData(FORMEITEMTIMER, -1);
-        }
-    }
-
-    //Attachment section
-    // Create the DeferredRegister for attachment types
-    private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, "toolforme");
-
-    // Serialization via codec
-    public static final Supplier<AttachmentType<Integer>> FORMEPLAYERCOOLDOWN = ATTACHMENT_TYPES.register(
-            "formeplayercooldown", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build());
-
-    public static final Supplier<AttachmentType<Integer>> FORMEITEMTIMER = ATTACHMENT_TYPES.register(
-            "formeitemtimer", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build());
-
-    @SubscribeEvent
-    //Custom Commands. For some reason I don't need to register all of them, but will do anyways for readability
-    public void registerCustomCommands(RegisterCommandsEvent event){
-        event.getDispatcher().register(ModCommands.checkPlayer);
-        event.getDispatcher().register(ModCommands.resetPlayer);
-        event.getDispatcher().register(ModCommands.revertItem);
-    }
-
-//    @SubscribeEvent
-//    //Prevent Forme changed item toss
-//    public void onItemToss(ItemTossEvent event){
-//        if(event.getEntity().getItem().has(PREVIOUS_ITEM_DATA.value())){
-//            event.setCanceled(true);
-//        }
-//    }
 }
