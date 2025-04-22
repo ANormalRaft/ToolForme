@@ -21,12 +21,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -242,6 +243,25 @@ public class ToolForme {
         if(!event.getEntity().level().isClientSide) {
             Player player = event.getEntity();
             ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
+
+            //Shield section
+            ItemStack offhandItem = player.getOffhandItem();
+            ItemStack mainhandItem = player.getMainHandItem();
+            if (player.isCrouching() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
+//                System.out.println(!player.getUseItem().isEmpty());
+                //Offhand has priority
+                if (offhandItem.getItem() instanceof ShieldItem) {
+                    if (!(player.getUseItem() == offhandItem)) {
+                        offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
+                    }
+                } else {
+                    if (!(player.getUseItem() == mainhandItem)) {
+                        mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
+                    }
+                }
+            }
+
+            //Forme section
             int formeCooldown = player.getData(FORMEPLAYERCOOLDOWN);
             int itemCooldown = player.getData(FORMEITEMTIMER);
             if (formeCooldown > 0) {

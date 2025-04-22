@@ -15,7 +15,7 @@ public class ServerFormePlayerCooldownPayloadHandler {
                 })
                 .exceptionally(e -> {
                     // Handle exception
-                    context.disconnect(Component.translatable("my_mod.networking.failedformeplayercooldown", e.getMessage()));
+                    context.disconnect(Component.translatable("toolforme.networking.failedformeplayercooldown", e.getMessage()));
                     return null;
                 });
     }

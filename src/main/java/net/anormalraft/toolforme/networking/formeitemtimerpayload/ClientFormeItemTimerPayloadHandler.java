@@ -26,7 +26,7 @@ public class ClientFormeItemTimerPayloadHandler {
                 })
                 .exceptionally(e -> {
                     // Handle exception
-                    context.disconnect(Component.translatable("my_mod.networking.failedformeitemtimercooldown", e.getMessage()));
+                    context.disconnect(Component.translatable("toolforme.networking.failedformeitemtimercooldown", e.getMessage()));
                     return null;
                 });
     }

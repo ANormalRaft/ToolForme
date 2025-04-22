@@ -6,7 +6,8 @@
     "SlotMixin",
     "InventoryMixin",
     "TridentMixin",
-    "ThrownTridentMixin"
+    "ThrownTridentMixin",
+    "MinecraftMixin"
   ],
   "client": [
   ],

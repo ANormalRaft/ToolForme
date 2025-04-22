@@ -15,7 +15,7 @@ public class ClientItemStackPayloadHandler {
                 })
                 .exceptionally(e -> {
                     // Handle exception
-                    context.disconnect(Component.translatable("my_mod.networking.failed", e.getMessage()));
+                    context.disconnect(Component.translatable("toolforme.networking.Itemstackpayloadfailed", e.getMessage()));
                     return null;
                 });
     }

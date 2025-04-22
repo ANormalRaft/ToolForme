@@ -3,5 +3,9 @@
   "key.toolforme.changeforme": "Tool Forme Activation",
   "my_mod.networking.failed": "itemstack sync attempt failed",
   "my_mod.networking.failedformeplayercooldown": "Forme Player Cooldown failed to sync",
-  "my_mod.networking.failedformeitemtimercooldown": "Item Timer failed to sync"
+  "my_mod.networking.failedformeitemtimercooldown": "Item Timer failed to sync",
+  "toolforme.shieldnetworking.failed": "Shield sync failed",
+  "toolforme.networking.failedformeplayercooldown": "Player Forme Cooldown sync failed",
+  "toolforme.networking.Itemstackpayloadfailed": "ItemStackPayload sync failed",
+  "toolforme.networking.failedformeitemtimercooldown": "Item Forme Timer sync failed"
 }
