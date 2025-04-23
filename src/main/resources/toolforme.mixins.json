@@ -2,6 +2,7 @@
   "required": true,
   "package": "net.anormalraft.toolforme.mixin",
   "compatibilityLevel": "JAVA_21",
+  "plugin": "net.anormalraft.toolforme.mixin.ToolFormeMixinPlugin",
   "mixins": [
     "SlotMixin",
     "InventoryMixin",

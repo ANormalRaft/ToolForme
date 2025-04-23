@@ -8,11 +8,22 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 @EventBusSubscriber(modid = ToolForme.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
+
+    public static int formeTimer;
+    public static int formePlayerCooldown;
+    public static double multiplier;
+    public static boolean shieldCrouch;
+    public static JsonObject bindings;
+    public static HashMap<String, Item[]> bindingsHashMap = HashMap.newHashMap(3);
+
+
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.IntValue FORME_TIMER = BUILDER
@@ -28,18 +39,14 @@ public class Config {
             .defineInRange("multiplier", 0.2, 0.0, Double.MAX_VALUE);
 
     private static final ModConfigSpec.ConfigValue<String> BINDINGS = BUILDER
-            .comment("String to be transformed into JSON by Gson to store information about what Forme applies to what list of weapons").define("bindings", "{\"minecraft:trident\": \"shovel$\", \"minecraft:mace\": \"_axe$\"}");
+            .comment("String to be transformed into JSON by Gson to store information about what Forme applies to what list of weapons")
+            .define("bindings", "{\"minecraft:trident\": \"shovel$\", \"minecraft:mace\": \"_axe$\"}");
 
-    private static final ModConfigSpec.ConfigValue<Boolean> SHIELD_CROUCH = BUILDER.comment("Should the shield be only activated on crouch instead of right click").define("shieldCrouch", true);
+    private static final ModConfigSpec.BooleanValue SHIELD_CROUCH = BUILDER
+            .comment("Should the shield be only activated on crouch instead of right click")
+            .define("shieldCrouch", true);
 
-    static final ModConfigSpec SPEC = BUILDER.build();
-
-    public static int formeTimer;
-    public static int formePlayerCooldown;
-    public static double multiplier;
-    public static JsonObject bindings;
-    public static HashMap<String, Item[]> bindingsHashMap = HashMap.newHashMap(3);
-    public static boolean shieldCrouch;
+    public static final ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -57,6 +64,7 @@ public class Config {
             Item[] allMatchesArray = BuiltInRegistries.ITEM.stream().filter((item) -> pattern.matcher(item.toString()).find()).toArray(Item[]::new);
             bindingsHashMap.put(entry.getKey(), allMatchesArray);
         }
-        shieldCrouch = SHIELD_CROUCH.get();
+        shieldCrouch = SHIELD_CROUCH.getAsBoolean();
+        System.out.println("CONFIGCONFIG SHIELDVALUE: "+ Config.shieldCrouch) ;
     }
 }

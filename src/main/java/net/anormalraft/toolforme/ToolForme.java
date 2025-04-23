@@ -25,6 +25,7 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
@@ -185,8 +186,10 @@ public class ToolForme {
     //Cancels the use of the shield on right click
     @SubscribeEvent
     public void onPlayerInteractRightClick(PlayerInteractEvent.RightClickItem event){
-        if(event.getItemStack().getItem() instanceof ShieldItem){
-            event.setCanceled(true);
+        if(Config.shieldCrouch) {
+            if (event.getItemStack().getItem() instanceof ShieldItem) {
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -199,17 +202,19 @@ public class ToolForme {
             ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
 
             //Shield section (part of the code responsible for enabling shield on crouch. The rest is in MinecraftMixin)
-            ItemStack offhandItem = player.getOffhandItem();
-            ItemStack mainhandItem = player.getMainHandItem();
-            if (player.isCrouching() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
-                //Offhand has priority
-                if (offhandItem.getItem() instanceof ShieldItem) {
-                    if (!(player.getUseItem() == offhandItem)) {
-                        offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
-                    }
-                } else {
-                    if (!(player.getUseItem() == mainhandItem)) {
-                        mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
+            if(Config.shieldCrouch) {
+                ItemStack offhandItem = player.getOffhandItem();
+                ItemStack mainhandItem = player.getMainHandItem();
+                if (player.isCrouching() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
+                    //Offhand has priority
+                    if (offhandItem.getItem() instanceof ShieldItem) {
+                        if (!(player.getUseItem() == offhandItem)) {
+                            offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
+                        }
+                    } else {
+                        if (!(player.getUseItem() == mainhandItem)) {
+                            mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
+                        }
                     }
                 }
             }
