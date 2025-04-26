@@ -44,7 +44,7 @@ public class Config {
 
     private static final ModConfigSpec.BooleanValue SHIELD_CROUCH = BUILDER
             .comment("Should the shield be only activated on crouch instead of right click")
-            .define("shieldCrouch", true);
+            .define("shieldCrouch", false);
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 

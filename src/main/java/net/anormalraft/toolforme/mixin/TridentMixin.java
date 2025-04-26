@@ -32,7 +32,7 @@ public class TridentMixin extends Item {
             throwntrident.pickup = AbstractArrow.Pickup.DISALLOWED;
             //Applies a cooldown if the thrower is a player and if the item doesn't have loyalty
         if(entityLiving instanceof Player && stack.getTagEnchantments().keySet().stream().noneMatch(enchantmentHolder -> enchantmentHolder.is(Enchantments.LOYALTY))){
-                ((Player) entityLiving).getCooldowns().addCooldown(this, 400);
+                ((Player) entityLiving).getCooldowns().addCooldown(this, 160);
             }
             ci.cancel();
 //        }
