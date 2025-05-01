@@ -4,13 +4,12 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "net.anormalraft.toolforme.mixin.ToolFormeMixinPlugin",
   "mixins": [
-    "SlotMixin",
     "InventoryMixin",
-    "TridentMixin",
+    "MinecraftMixin",
+    "SlotMixin",
     "ThrownTridentMixin",
-    "MinecraftMixin"
-  ],
-  "client": [
+    "TridentMixin",
+    "LocalPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

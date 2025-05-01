@@ -19,7 +19,7 @@ public final class ToolFormeMixinPlugin implements IMixinConfigPlugin {
     //Code taken from the Adorn mod
     private static final Supplier<Boolean> TRUE = () -> true;
 
-    private static final Map<String, Supplier<Boolean>> CONDITIONS = ImmutableMap.of("net.anormalraft.toolforme.mixin.MinecraftMixin", () -> shieldCrouchCondition);
+    private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of("net.anormalraft.toolforme.mixin.MinecraftMixin", () -> shieldCrouchCondition, "net.anormalraft.toolforme.mixin.LocalPlayerMixin", () -> shieldCrouchCondition);
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
