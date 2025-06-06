@@ -104,16 +104,23 @@ public class ToolForme {
                 if (!itemStack.isEmpty()) {
                     if (itemStack.getComponents().has(FORME_BOOL.value())) {
                         if(itemStack.getComponents().get(FORME_BOOL.value()).value()) {
-                            if (player.getData(FORMEPLAYERCOOLDOWN) <= 0 && player.getData(FORMEITEMTIMER) == -1) {
-                                if (!itemStack.getComponents().has(PREVIOUS_ITEM_DATA.value())) {
-                                    findItemAndApplyDataComponents(itemStack, player);
+                            //Check to impede softlock when dying. For some reason, the client FORMEITEMTIMER doesn't sync on death, while its server counterpart does, as well as the entirety of FORMEPLAYERCOOLDOWN. This if statement takes the FORMEITEMTIMER out back, resets it to -1, and fires findItemAndApplyDataComponents
+                            if(!(player.getData(FORMEPLAYERCOOLDOWN) == 0 && player.getData(FORMEITEMTIMER) == 0)) {
+                                if (player.getData(FORMEPLAYERCOOLDOWN) <= 0 && player.getData(FORMEITEMTIMER) == -1) {
+                                    if (!itemStack.getComponents().has(PREVIOUS_ITEM_DATA.value())) {
+                                        findItemAndApplyDataComponents(itemStack, player);
+                                    } else {
+                                        player.displayClientMessage(Component.literal("Item already in Forme change!"), true);
+                                    }
                                 } else {
-                                    player.displayClientMessage(Component.literal("Item already in Forme change!"), true);
+                                    double minutesLeft = (double) player.getData(FORMEPLAYERCOOLDOWN) / 20 / 60;
+                                    player.displayClientMessage(Component.literal("Forme change on cooldown for " + String.format("%.2f", minutesLeft) + " minutes"), true);
+//                                    System.out.println("FormePlayerCooldown: " + player.getData(FORMEPLAYERCOOLDOWN));
+//                                    System.out.println("FormeItemTimer: " + player.getData(FORMEITEMTIMER));
                                 }
                             } else {
-                                double minutesLeft = (double) player.getData(FORMEPLAYERCOOLDOWN) / 20 / 60;
-                                player.displayClientMessage(Component.literal("Forme change on cooldown for " + String.format("%.2f", minutesLeft) + " minutes"), true);
-                                System.out.println(player.getData(FORMEITEMTIMER));
+                                player.setData(FORMEITEMTIMER, -1);
+                                findItemAndApplyDataComponents(itemStack, player);
                             }
                         } else {
                             player.displayClientMessage(Component.literal("This item's Forme has been sealed"), true);
@@ -166,6 +173,7 @@ public class ToolForme {
                     PacketDistributor.sendToServer(new ItemStackPayload(formeChangeItem));
 
                     //Data attachment of the item's timer. Both the client and server need to be notified
+                    System.out.println("PENUSSSSSSSSSSSSSSSSSS");
                     int itemTimerValue = Config.formeTimer;
                     player.setData(FORMEITEMTIMER, itemTimerValue);
                     PacketDistributor.sendToServer(new FormeItemTimerPayload(itemTimerValue + 1));
@@ -222,11 +230,12 @@ public class ToolForme {
             //Forme section
             int formeCooldown = player.getData(FORMEPLAYERCOOLDOWN);
             int itemCooldown = player.getData(FORMEITEMTIMER);
+            //Forme Cooldown handling
             if (formeCooldown > 0) {
                 player.setData(FORMEPLAYERCOOLDOWN, formeCooldown - 1);
                 PacketDistributor.sendToPlayer(serverPlayer, new FormePlayerCooldownPayload(formeCooldown));
             }
-            //Item Timer handling and reversion
+            //Item Timer handling and tool reversion
             if (isFormeActive && itemCooldown == 0 ) {
                 //Find the slot first
                 for (int i = 0; i < player.getInventory().getContainerSize(); i++) {

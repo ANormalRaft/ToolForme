@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -30,19 +31,29 @@ public class ModAttachments {
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
         Player player = event.getEntity();
         ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
-        int formePlayerCooldown = player.getData(FORMEPLAYERCOOLDOWN);
 
-        //Send FormePlayerCooldown data to the client
-        PacketDistributor.sendToPlayer(serverPlayer, new FormePlayerCooldownPayload(formePlayerCooldown));
-
-        //Send FormeItemTimer data to both the client and the server(?). If your timer de-syncs, then it is here that you would put 0 and -1 respectively. Added a first join check
+        //Send FormeItemTimer data to the client. If your timer de-syncs, then it is here that you would put 0, like for the first join check
         if(player.hasData(FORMEITEMTIMER)) {
             int itemCooldown = player.getData(FORMEITEMTIMER);
+            int formePlayerCooldown = player.getData(FORMEPLAYERCOOLDOWN);
             PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown + 1));
-            player.setData(FORMEITEMTIMER, itemCooldown);
+            //Send FormePlayerCooldown data to the client
+            PacketDistributor.sendToPlayer(serverPlayer, new FormePlayerCooldownPayload(formePlayerCooldown + 1));
         } else {
             PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(0));
-            player.setData(FORMEITEMTIMER, -1);
+            PacketDistributor.sendToPlayer(serverPlayer, new FormePlayerCooldownPayload(1));
         }
     }
+
+//    @SubscribeEvent
+    //Attempt to copy data on death
+//    public static void onPlayerClone(PlayerEvent.Clone event){
+//        if(event.isWasDeath() && event.getOriginal().hasData(FORMEITEMTIMER)){
+//            Player player = event.getEntity();
+//            ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
+//
+//            PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(-100));
+//            System.out.println("PEEEEEEEEEEEEEEEE "+ event.getOriginal().getData(FORMEITEMTIMER));
+//        }
+//    }
 }
