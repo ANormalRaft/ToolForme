@@ -114,7 +114,7 @@ public class ToolForme {
                                     }
                                 } else {
                                     double minutesLeft = (double) player.getData(FORMEPLAYERCOOLDOWN) / 20 / 60;
-                                    player.displayClientMessage(Component.literal("Forme change on cooldown for " + String.format("%.2f", minutesLeft) + " minutes"), true);
+                                    player.displayClientMessage(Component.literal("Forme change on cooldown for " + String.format("%.0f", minutesLeft) + " minutes and " + String.format("%.0f", ((minutesLeft - Math.floor(minutesLeft)) * 100 * 30) / 60) + " seconds"), true);
 //                                    System.out.println("FormePlayerCooldown: " + player.getData(FORMEPLAYERCOOLDOWN));
 //                                    System.out.println("FormeItemTimer: " + player.getData(FORMEITEMTIMER));
                                 }
@@ -215,13 +215,15 @@ public class ToolForme {
                 ItemStack mainhandItem = player.getMainHandItem();
                 if (player.isCrouching() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
                     //Offhand has priority
-                    if (offhandItem.getItem() instanceof ShieldItem) {
+                    if (offhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(offhandItem.getItem())) {
                         if (!(player.getUseItem() == offhandItem)) {
                             offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
                         }
                     } else {
-                        if (!(player.getUseItem() == mainhandItem)) {
-                            mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
+                        if(!player.getCooldowns().isOnCooldown(mainhandItem.getItem())) {
+                            if (!(player.getUseItem() == mainhandItem)) {
+                                mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
+                            }
                         }
                     }
                 }
