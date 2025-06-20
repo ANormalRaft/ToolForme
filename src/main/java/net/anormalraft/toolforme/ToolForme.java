@@ -220,7 +220,7 @@ public class ToolForme {
                             offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
                         }
                     } else {
-                        if(!player.getCooldowns().isOnCooldown(mainhandItem.getItem())) {
+                        if(mainhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(mainhandItem.getItem())) {
                             if (!(player.getUseItem() == mainhandItem)) {
                                 mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
                             }
