@@ -173,7 +173,6 @@ public class ToolForme {
                     PacketDistributor.sendToServer(new ItemStackPayload(formeChangeItem));
 
                     //Data attachment of the item's timer. Both the client and server need to be notified
-                    System.out.println("PENUSSSSSSSSSSSSSSSSSS");
                     int itemTimerValue = Config.formeTimer;
                     player.setData(FORMEITEMTIMER, itemTimerValue);
                     PacketDistributor.sendToServer(new FormeItemTimerPayload(itemTimerValue + 1));
