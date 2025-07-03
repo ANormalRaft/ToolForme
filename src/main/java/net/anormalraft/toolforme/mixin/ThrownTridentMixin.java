@@ -13,16 +13,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static net.anormalraft.toolforme.component.ModDataComponents.PREVIOUS_ITEM_DATA;
+
 @Mixin(ThrownTrident.class)
 public abstract class ThrownTridentMixin extends Entity {
+
+    @Shadow public abstract ItemStack getWeaponItem();
 
     public ThrownTridentMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
 
+    //Removes any doubles that a Forme trident could generate
     @Inject(method = "tryPickup", at = @At(value = "HEAD"), cancellable = true)
     public void denyPlayerTouch(Player player, CallbackInfoReturnable<Boolean> cir){
-        this.discard();
-        cir.cancel();
+        if(this.getWeaponItem().has(PREVIOUS_ITEM_DATA.value())) {
+            this.discard();
+            cir.cancel();
+        }
     }
 }

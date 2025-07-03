@@ -5,12 +5,16 @@
   "plugin": "net.anormalraft.toolforme.mixin.ToolFormeMixinPlugin",
   "mixins": [
     "InventoryMixin",
+    "LocalPlayerMixin",
     "MinecraftMixin",
     "SlotMixin",
     "ThrownTridentMixin",
     "TridentMixin",
-    "LocalPlayerMixin"
+    "TridentRiptideFixIfDatapackMixin"
   ],
+  "mixinextras": {
+    "minVersion": "0.5.0-rc.2"
+  },
   "injectors": {
     "defaultRequire": 1
   }

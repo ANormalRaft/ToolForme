@@ -19,32 +19,42 @@ public class Config {
     public static int formeTimer;
     public static int formePlayerCooldown;
     public static double multiplier;
-    public static boolean shieldCrouch;
     public static JsonObject bindings;
     public static HashMap<String, Item[]> bindingsHashMap = HashMap.newHashMap(3);
+    public static boolean shieldCrouch;
+    public static boolean tridentRiptideFixIfDatapack;
+    public static boolean playerResetOnDeath;
 
 
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.IntValue FORME_TIMER = BUILDER
             .comment("The timer bound to items which determines the amount of time in ticks an item may be in Forme change")
-            .defineInRange("formeTimer", 60, 0, Integer.MAX_VALUE);
+            .defineInRange("formeTimer", 1800, 0, Integer.MAX_VALUE);
 
     private static final ModConfigSpec.IntValue FORME_PLAYER_COOLDOWN = BUILDER
             .comment("The amount of time in ticks the player can Forme change (global cooldown)")
-            .defineInRange("formePlayerCooldown", 160, 0, Integer.MAX_VALUE);
+            .defineInRange("formePlayerCooldown", 4000, 0, Integer.MAX_VALUE);
 
     private static final ModConfigSpec.DoubleValue MULTIPLIER = BUILDER
             .comment("The multiplier for attack damage")
-            .defineInRange("multiplier", 0.2, 0.0, Double.MAX_VALUE);
+            .defineInRange("multiplier", 0.25, 0.0, Double.MAX_VALUE);
 
     private static final ModConfigSpec.ConfigValue<String> BINDINGS = BUILDER
             .comment("String to be transformed into JSON by Gson to store information about what Forme applies to what list of weapons")
             .define("bindings", "{\"minecraft:trident\": \"shovel$\", \"minecraft:mace\": \"_axe$\"}");
 
     private static final ModConfigSpec.BooleanValue SHIELD_CROUCH = BUILDER
-            .comment("Should the shield be only activated on crouch instead of right click")
+            .comment("Should the shield be only activated on crouch instead of right click. Default: false")
             .define("shieldCrouch", false);
+
+    private static final ModConfigSpec.BooleanValue TRIDENT_RIPTIDE_FIX_IF_DATAPACK = BUILDER
+            .comment("Can both loyalty and riptide be enchanted on an item if a datapack allowing loyalty and riptide to not be incompatible exists (through modifying riptide enchantment components). Default: false")
+            .define("tridentRiptideFixIfDatapack", false);
+
+    private static final ModConfigSpec.BooleanValue PLAYER_RESET_ON_DEATH = BUILDER
+            .comment("Should the item and player's timers be reset upon death (also reverting the Forme item if any)? HIGHLY RECOMMENDED TO BE TRUE FOR NON-KEEPINVENTORY (DOES NOT INCLUDE GRAVESTONES!) PACKS. Default: true")
+            .define("playerResetOnDeath", true);
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 
@@ -56,7 +66,7 @@ public class Config {
         bindings = new Gson().fromJson(BINDINGS.get(), JsonObject.class);
         //Put stuff in HashMap
         for(var entry : bindings.asMap().entrySet()){
-            //You cannot do like in KubeJS where you can use "matches()". You have to do all these steps because Java devs fucked up
+            //You cannot do like in KubeJS where you can use "matches()". You have to do all these steps due to Java devs
             String output = entry.getValue().toString();
             String stringPattern = output.substring(1, output.length()-1);
             Pattern pattern = Pattern.compile(stringPattern);
@@ -65,6 +75,7 @@ public class Config {
             bindingsHashMap.put(entry.getKey(), allMatchesArray);
         }
         shieldCrouch = SHIELD_CROUCH.getAsBoolean();
-        System.out.println("CONFIGCONFIG SHIELDVALUE: "+ Config.shieldCrouch) ;
+        tridentRiptideFixIfDatapack = TRIDENT_RIPTIDE_FIX_IF_DATAPACK.getAsBoolean();
+        playerResetOnDeath = PLAYER_RESET_ON_DEATH.getAsBoolean();
     }
 }

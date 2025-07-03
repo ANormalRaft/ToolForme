@@ -2,6 +2,7 @@ package net.anormalraft.toolforme;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.anormalraft.toolforme.attachment.ModAttachments;
+import net.anormalraft.toolforme.command.ModCommands;
 import net.anormalraft.toolforme.component.ModDataComponents;
 import net.anormalraft.toolforme.networking.PayloadHousekeeping;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -29,6 +31,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -262,6 +265,14 @@ public class ToolForme {
                 player.setData(FORMEITEMTIMER, itemCooldown - 1);
                 PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown));
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingDeathEvent(LivingDeathEvent event){
+        Entity deadEntity = event.getEntity();
+        if(deadEntity instanceof ServerPlayer){
+            ModCommands.resetPlayerData((ServerPlayer) deadEntity);
         }
     }
 }

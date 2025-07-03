@@ -42,7 +42,7 @@ public class ModCommands {
         return 1;
     }
 
-    private static int resetPlayerData(ServerPlayer player){
+    public static int resetPlayerData(ServerPlayer player){
         revertFormeItem(player);
         String playerName = player.getName().getString();
         PacketDistributor.sendToPlayer(player, new FormePlayerCooldownPayload(0));

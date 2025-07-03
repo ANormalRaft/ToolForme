@@ -15,11 +15,12 @@ import java.util.function.Supplier;
 public final class ToolFormeMixinPlugin implements IMixinConfigPlugin {
 
     private static boolean shieldCrouchCondition;
+    private static boolean tridentRiptideFixIfDatapackCondition;
 
     //Code taken from the Adorn mod
     private static final Supplier<Boolean> TRUE = () -> true;
 
-    private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of("net.anormalraft.toolforme.mixin.MinecraftMixin", () -> shieldCrouchCondition, "net.anormalraft.toolforme.mixin.LocalPlayerMixin", () -> shieldCrouchCondition);
+    private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of("net.anormalraft.toolforme.mixin.MinecraftMixin", () -> shieldCrouchCondition, "net.anormalraft.toolforme.mixin.LocalPlayerMixin", () -> shieldCrouchCondition, "net.anormalraft.toolforme.mixin.TridentRiptideFixIfDatapackMixin", () -> tridentRiptideFixIfDatapackCondition);
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
@@ -32,6 +33,7 @@ public final class ToolFormeMixinPlugin implements IMixinConfigPlugin {
             File file = new File("./config/toolforme-common.toml");
             Toml toml = new Toml().read(file);
             shieldCrouchCondition = toml.getBoolean("shieldCrouch");
+            tridentRiptideFixIfDatapackCondition = toml.getBoolean("tridentRiptideFixIfDatapack");
         } catch (Exception e){
             throw new RuntimeException("Could not find the toolforme-common.toml file in config folder", e);
         }

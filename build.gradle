@@ -137,6 +137,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     jarJar(implementation("com.moandjiezana.toml:toml4j:0.7.2")){}
     additionalRuntimeClasspath 'com.moandjiezana.toml:toml4j:0.7.2'
+    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:0.5.0-rc.2"))
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
