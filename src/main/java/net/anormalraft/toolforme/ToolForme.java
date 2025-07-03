@@ -270,9 +270,11 @@ public class ToolForme {
 
     @SubscribeEvent
     public void onLivingDeathEvent(LivingDeathEvent event){
-        Entity deadEntity = event.getEntity();
-        if(deadEntity instanceof ServerPlayer){
-            ModCommands.resetPlayerData((ServerPlayer) deadEntity);
+        if(Config.playerResetOnDeath) {
+            Entity deadEntity = event.getEntity();
+            if (deadEntity instanceof ServerPlayer) {
+                ModCommands.resetPlayerData((ServerPlayer) deadEntity);
+            }
         }
     }
 }
