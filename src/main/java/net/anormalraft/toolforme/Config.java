@@ -35,7 +35,7 @@ public class Config {
 
     private static final ModConfigSpec.IntValue FORME_PLAYER_COOLDOWN = BUILDER
             .comment("The amount of time in ticks the player can Forme change (global cooldown)")
-            .defineInRange("formePlayerCooldown", 4000, 0, Integer.MAX_VALUE);
+            .defineInRange("formePlayerCooldown", 3600, 0, Integer.MAX_VALUE);
 
     private static final ModConfigSpec.DoubleValue MULTIPLIER = BUILDER
             .comment("The multiplier for attack damage")
