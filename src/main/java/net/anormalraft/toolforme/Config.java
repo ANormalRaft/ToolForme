@@ -24,6 +24,7 @@ public class Config {
     public static boolean shieldCrouch;
     public static boolean tridentRiptideFixIfDatapack;
     public static boolean playerResetOnDeath;
+    public static List<Integer> loyaltyCooldowns;
 
 
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
@@ -56,6 +57,10 @@ public class Config {
             .comment("Should the item and player's timers be reset upon death (also reverting the Forme item if any)? HIGHLY RECOMMENDED TO BE TRUE FOR NON-KEEPINVENTORY (DOES NOT INCLUDE GRAVESTONES!) PACKS. Default: true")
             .define("playerResetOnDeath", true);
 
+    private static final ModConfigSpec.ConfigValue<List<Integer>> LOYALTY_COOLDOWNS = BUILDER
+            .comment("Array listing the cooldown timings in ticks (20 ticks = 1 second) that each level of loyalty should incur on a Forme Trident. The first number is for a trident without loyalty")
+            .define("loyaltyCooldowns", Arrays.asList(140, 80, 60, 40));
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent
@@ -77,5 +82,6 @@ public class Config {
         shieldCrouch = SHIELD_CROUCH.getAsBoolean();
         tridentRiptideFixIfDatapack = TRIDENT_RIPTIDE_FIX_IF_DATAPACK.getAsBoolean();
         playerResetOnDeath = PLAYER_RESET_ON_DEATH.getAsBoolean();
+        loyaltyCooldowns = LOYALTY_COOLDOWNS.get();
     }
 }
