@@ -117,7 +117,7 @@ public class ToolForme {
                                     }
                                 } else {
                                     double minutesLeft = (double) player.getData(FORMEPLAYERCOOLDOWN) / 20 / 60;
-                                    player.displayClientMessage(Component.literal("Forme change on cooldown for " + String.format("%.0f", minutesLeft) + " minutes and " + String.format("%.0f", ((minutesLeft - Math.floor(minutesLeft)) * 100 * 30) / 60) + " seconds"), true);
+                                    player.displayClientMessage(Component.literal("Forme change on cooldown for " + String.format("%.0f", Math.floor(minutesLeft)) + " minutes and " + String.format("%.0f", (minutesLeft - Math.floor(minutesLeft)) * 60) + " seconds"), true);
 //                                    System.out.println("FormePlayerCooldown: " + player.getData(FORMEPLAYERCOOLDOWN));
 //                                    System.out.println("FormeItemTimer: " + player.getData(FORMEITEMTIMER));
                                 }
