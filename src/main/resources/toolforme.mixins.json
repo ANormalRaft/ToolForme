@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "plugin": "net.anormalraft.toolforme.mixin.ToolFormeMixinPlugin",
   "mixins": [
+    "Entity_SwimMixin",
     "InventoryMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
