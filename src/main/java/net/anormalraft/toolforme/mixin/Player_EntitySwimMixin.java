@@ -19,7 +19,6 @@ import java.util.stream.StreamSupport;
 @Mixin(Player.class)
 public abstract class Player_EntitySwimMixin extends Entity implements IEntityExtension {
 
-
     public Player_EntitySwimMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
