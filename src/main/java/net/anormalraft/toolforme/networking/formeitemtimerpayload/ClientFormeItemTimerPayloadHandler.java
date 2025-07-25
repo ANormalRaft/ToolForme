@@ -1,5 +1,6 @@
 package net.anormalraft.toolforme.networking.formeitemtimerpayload;
 
+import net.anormalraft.toolforme.ToolForme;
 import net.anormalraft.toolforme.networking.formeplayercooldownpayload.FormePlayerCooldownPayload;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -20,6 +21,10 @@ public class ClientFormeItemTimerPayloadHandler {
                 ResourceLocation rl = ResourceLocation.tryParse("toolforme:down_sound");
                 SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
                 player.playSound(soundEvent, 0.7f, 1f);
+            }
+            //This flip needs to happen or else the client won't get notified (client)
+            if(player.getData(FORMEITEMTIMER) == 0 && ToolForme.isFormeActive){
+                ToolForme.isFormeActive = false;
             }
             player.setData(FORMEITEMTIMER, formeItemTimerPayload.timerValue() - 1);
 //            System.out.println(player.getData(FORMEITEMTIMER));

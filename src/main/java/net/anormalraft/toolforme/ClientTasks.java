@@ -85,7 +85,7 @@ public class ClientTasks {
 
     //Helper Method that finds the corresponding item according to the config, puts it into the player's slot and attaches data components to the item and data attachments to the player to handle the timing of the item
     public static void switchBaseItemToToolFormeItem(ItemStack[] itemStackArray, Player player){
-        ItemStack formeChangeItem = itemStackArray[1];
+        ItemStack formeChangeItem = itemStackArray[1].copy();
         //Make a sound
         ResourceLocation rl = ResourceLocation.tryParse("toolforme:up_sound");
         SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
@@ -104,7 +104,7 @@ public class ClientTasks {
         player.setData(FORMEPLAYERCOOLDOWN, playerCooldown);
         PacketDistributor.sendToServer(new FormePlayerCooldownPayload(playerCooldown + 1));
 
-        //Set the forme control boolean to true
+        //Set the forme control boolean to true (client)
         ToolForme.isFormeActive = true;
     }
 
@@ -117,12 +117,13 @@ public class ClientTasks {
                 ItemStack itemStack = player.getMainHandItem();
                 if (!itemStack.isEmpty()) {
                     ItemStack[] itemStackArray =  searchAndPrepareIfItemStackInConfig(itemStack);
-                    if (itemStackArray[0].getComponents().has(FORME_BOOL.value())) {
-                        if(itemStackArray[0].getComponents().get(FORME_BOOL.value()).value()) {
+                    ItemStack baseItem = itemStackArray[0].copy();
+                    if (baseItem.getComponents().has(FORME_BOOL.value())) {
+                        if(baseItem.getComponents().get(FORME_BOOL.value()).value()) {
                             //Check to impede softlock when dying. For some reason, the client FORMEITEMTIMER doesn't sync on death, while its server counterpart does, as well as the entirety of FORMEPLAYERCOOLDOWN. This if statement takes the FORMEITEMTIMER out back, resets it to -1, and fires findItemAndApplyDataComponents
                             if(!(player.getData(FORMEPLAYERCOOLDOWN) == 0 && player.getData(FORMEITEMTIMER) == 0)) {
                                 if (player.getData(FORMEPLAYERCOOLDOWN) <= 0 && player.getData(FORMEITEMTIMER) == -1) {
-                                    if (!itemStackArray[0].getComponents().has(PREVIOUS_ITEM_DATA.value())) {
+                                    if (!baseItem.getComponents().has(PREVIOUS_ITEM_DATA.value())) {
                                         switchBaseItemToToolFormeItem(itemStackArray, player);
                                     } else {
                                         player.displayClientMessage(Component.literal("Item already in Forme change!"), true);
