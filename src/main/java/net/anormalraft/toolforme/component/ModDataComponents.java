@@ -67,17 +67,17 @@ public class ModDataComponents {
                     .networkSynchronized(PREVIOUS_ITEM_STREAM_CODEC)
     );
 
-    //Performs the work of searching for all items specified by the config and adding the FORME_BOOL component in them
-    public static void modifyComponents(ModifyDefaultComponentsEvent event) {
-        Config.bindingsHashMap.forEach((key, itemArray) -> {
-            for(Item item : itemArray) {
-                Item searchedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item.toString()));
-                event.modify(searchedItem, builder ->
-                        builder.set(FORME_BOOL.value(), new ModDataComponents.FormeBoolRecord(true))
-                );
-            }
-        });
-    }
+    //Performs the work of searching for all items specified by the config and adding the FORME_BOOL component in them (Unused)
+//    public static void modifyComponents(ModifyDefaultComponentsEvent event) {
+//        Config.bindingsHashMap.forEach((key, itemArray) -> {
+//            for(Item item : itemArray) {
+//                Item searchedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item.toString()));
+//                event.modify(searchedItem, builder ->
+//                        builder.set(FORME_BOOL.value(), new ModDataComponents.FormeBoolRecord(true))
+//                );
+//            }
+//        });
+//    }
 }
     
 

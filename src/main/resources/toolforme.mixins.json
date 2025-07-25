@@ -5,7 +5,6 @@
   "plugin": "net.anormalraft.toolforme.mixin.ToolFormeMixinPlugin",
   "mixins": [
     "InventoryMixin",
-    "LocalPlayerMixin",
     "MinecraftMixin",
     "Player_EntitySwimMixin",
     "SlotMixin",
@@ -13,6 +12,7 @@
     "TridentMixin",
     "TridentRiptideFixIfDatapackMixin"
   ],
+  "client": ["LocalPlayerMixin"],
   "mixinextras": {
     "minVersion": "0.5.0-rc.2"
   },
