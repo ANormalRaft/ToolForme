@@ -30,7 +30,7 @@ public final class ToolFormeMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
         try {
-            File file = new File("./config/toolforme-common.toml");
+            File file = new File("./config/toolforme-server.toml");
             Toml toml = new Toml().read(file);
             shieldCrouchCondition = toml.getBoolean("shieldCrouch");
             tridentRiptideFixIfDatapackCondition = toml.getBoolean("tridentRiptideFixIfDatapack");
