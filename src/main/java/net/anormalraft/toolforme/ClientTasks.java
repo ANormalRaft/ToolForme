@@ -103,9 +103,6 @@ public class ClientTasks {
         int playerCooldown = Config.formePlayerCooldown;
         player.setData(FORMEPLAYERCOOLDOWN, playerCooldown);
         PacketDistributor.sendToServer(new FormePlayerCooldownPayload(playerCooldown + 1));
-
-        //Set the forme control boolean to true (client)
-        ToolForme.isFormeActive = true;
     }
 
 

@@ -45,8 +45,8 @@ public class ModCommands {
     public static int resetPlayerData(ServerPlayer player){
         revertFormeItem(player);
         String playerName = player.getName().getString();
-        PacketDistributor.sendToPlayer(player, new FormePlayerCooldownPayload(0));
         player.setData(FORMEPLAYERCOOLDOWN, 0);
+        PacketDistributor.sendToPlayer(player, new FormePlayerCooldownPayload(0));
         PacketDistributor.sendToPlayer(player, new FormeItemTimerPayload(0));
         player.setData(FORMEITEMTIMER, -1);
         player.displayClientMessage(Component.literal(playerName + "'s Forme data has been reset!"), false);

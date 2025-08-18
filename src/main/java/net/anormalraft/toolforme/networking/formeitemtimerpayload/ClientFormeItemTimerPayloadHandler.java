@@ -22,10 +22,6 @@ public class ClientFormeItemTimerPayloadHandler {
                 SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
                 player.playSound(soundEvent, 0.7f, 1f);
             }
-            //This flip needs to happen or else the client won't get notified (client)
-            if(player.getData(FORMEITEMTIMER) == 0 && ToolForme.isFormeActive){
-                ToolForme.isFormeActive = false;
-            }
             player.setData(FORMEITEMTIMER, formeItemTimerPayload.timerValue() - 1);
 //            System.out.println(player.getData(FORMEITEMTIMER));
         }).exceptionally(e -> {

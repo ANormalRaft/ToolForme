@@ -40,8 +40,6 @@ public class ToolForme {
     public static final String MODID = "toolforme";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
-    //Boolean to control the item swap previously handled by the Mixin
-    public static boolean isFormeActive = false;
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -127,8 +125,12 @@ public class ToolForme {
                 player.setData(FORMEPLAYERCOOLDOWN, formeCooldown - 1);
                 PacketDistributor.sendToPlayer(serverPlayer, new FormePlayerCooldownPayload(formeCooldown));
             }
+
             //Item Timer handling and tool reversion
-            if (isFormeActive && itemCooldown == 0 ) {
+            if (itemCooldown > 0) {
+                player.setData(FORMEITEMTIMER, itemCooldown - 1);
+                PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown));
+            } else if (itemCooldown == 0) {
                 //Find the slot first
                 for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                     ItemStack itemStack = player.getSlot(i).get();
@@ -137,8 +139,6 @@ public class ToolForme {
                         ModDataComponents.PreviousItemData itemData = itemStack.getComponents().get(PREVIOUS_ITEM_DATA.value());
                         //Set the itemstack
                         player.getSlot(i).set(itemData.value());
-                        //Forme control boolean to false
-                        isFormeActive = false;
                         //Forme timer here so that the timer doesn't go into further negative numbers and to lock the player missing their item
                         player.setData(FORMEITEMTIMER, itemCooldown - 1);
                         PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown));
@@ -149,9 +149,6 @@ public class ToolForme {
                 }
 //            throw new NoSuchElementException("No Forme Change item was found in inventory on item forme timer running out");
                 player.displayClientMessage(Component.literal("Pick up your dropped Forme Item or reset your ToolForme timers with commands"), true);
-            } else if (itemCooldown > 0) {
-                player.setData(FORMEITEMTIMER, itemCooldown - 1);
-                PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(itemCooldown));
             }
         }
     }

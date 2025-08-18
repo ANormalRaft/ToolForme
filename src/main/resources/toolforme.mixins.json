@@ -12,7 +12,9 @@
     "TridentMixin",
     "TridentRiptideFixIfDatapackMixin"
   ],
-  "client": ["LocalPlayerMixin"],
+  "client": [
+    "LocalPlayerMixin"
+  ],
   "mixinextras": {
     "minVersion": "0.5.0-rc.2"
   },
