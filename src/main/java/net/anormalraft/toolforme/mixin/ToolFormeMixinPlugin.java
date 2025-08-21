@@ -1,6 +1,7 @@
 package net.anormalraft.toolforme.mixin;
 
 import com.moandjiezana.toml.Toml;
+import net.anormalraft.toolforme.Config;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -14,13 +15,10 @@ import java.util.function.Supplier;
 
 public final class ToolFormeMixinPlugin implements IMixinConfigPlugin {
 
-    private static boolean shieldCrouchCondition;
-    private static boolean tridentRiptideFixIfDatapackCondition;
-
     //Code taken from the Adorn mod
     private static final Supplier<Boolean> TRUE = () -> true;
 
-    private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of("net.anormalraft.toolforme.mixin.MinecraftMixin", () -> shieldCrouchCondition, "net.anormalraft.toolforme.mixin.LocalPlayerMixin", () -> shieldCrouchCondition, "net.anormalraft.toolforme.mixin.TridentRiptideFixIfDatapackMixin", () -> tridentRiptideFixIfDatapackCondition, "net.anormalraft.toolforme.mixin.Entity_SwimMixin", () -> shieldCrouchCondition);
+    private static final Map<String, Supplier<Boolean>> CONDITIONS = Map.of("net.anormalraft.toolforme.mixin.MinecraftMixin", () -> Config.shieldCrouch, "net.anormalraft.toolforme.mixin.LocalPlayerMixin", () -> Config.shieldCrouch, "net.anormalraft.toolforme.mixin.TridentRiptideFixIfDatapackMixin", () -> Config.tridentRiptideFixIfDatapack, "net.anormalraft.toolforme.mixin.Entity_SwimMixin", () -> Config.shieldCrouch);
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
@@ -29,14 +27,7 @@ public final class ToolFormeMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        try {
-            File file = new File("./config/toolforme-server.toml");
-            Toml toml = new Toml().read(file);
-            shieldCrouchCondition = toml.getBoolean("shieldCrouch");
-            tridentRiptideFixIfDatapackCondition = toml.getBoolean("tridentRiptideFixIfDatapack");
-        } catch (Exception e){
-            throw new RuntimeException("Could not find the toolforme-common.toml file in config folder", e);
-        }
+
     }
 
     @Override

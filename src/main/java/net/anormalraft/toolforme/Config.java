@@ -64,7 +64,7 @@ public class Config {
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent
-    static void onLoad(final ModConfigEvent event) {
+    static void onLoad(final ModConfigEvent.Loading event) {
         formeTimer = FORME_TIMER.get();
         formePlayerCooldown = FORME_PLAYER_COOLDOWN.get();
         multiplier = MULTIPLIER.get();
