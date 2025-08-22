@@ -40,16 +40,16 @@ public class TridentMixin extends Item {
             if (entityLiving instanceof Player) {
                 Stream<Holder<Enchantment>> itemEnchantmentStream = stack.getTagEnchantments().keySet().stream();
                 if (itemEnchantmentStream.noneMatch(enchantmentHolder -> enchantmentHolder.is(Enchantments.LOYALTY))) {
-                    ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns.get(0));
+                    ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[0]);
                 } else {
                     int loyaltyLevel =  stack.getTagEnchantments().getLevel(level.holderOrThrow(Enchantments.LOYALTY));
                     System.out.println(loyaltyLevel);
                     if (loyaltyLevel == 1) {
-                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns.get(1));
+                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[1]);
                     } else if (loyaltyLevel == 2){
-                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns.get(2));
+                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[2]);
                     } else if (loyaltyLevel == 3){
-                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns.get(3));
+                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[3]);
                     }
                 }
                 ci.cancel();

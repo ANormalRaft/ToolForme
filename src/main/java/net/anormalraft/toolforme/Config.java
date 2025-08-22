@@ -25,9 +25,7 @@ public class Config {
     public static boolean shieldCrouch;
     public static boolean tridentRiptideFixIfDatapack;
     public static boolean playerResetOnDeath;
-    public static List<Integer> loyaltyCooldowns;
-    static Integer[] integerArray = {140, 80, 60, 40};
-
+    public static int[] loyaltyCooldowns;
 
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
@@ -59,9 +57,9 @@ public class Config {
             .comment("Should the item and player's timers be reset upon death (also reverting the Forme item if any)? HIGHLY RECOMMENDED TO BE TRUE FOR NON-KEEPINVENTORY (DOES NOT INCLUDE GRAVESTONES!) PACKS. Default: true")
             .define("playerResetOnDeath", true);
 
-    public static final ModConfigSpec.ConfigValue<List<Integer>> LOYALTY_COOLDOWNS = BUILDER
+    public static final ModConfigSpec.ConfigValue<String> LOYALTY_COOLDOWNS = BUILDER
             .comment("Array listing the cooldown timings in ticks (20 ticks = 1 second) that each level of loyalty should incur on a Forme Trident. The first number is for a trident without loyalty")
-            .define("loyaltyCooldowns", () -> List.of(140, 80, 60, 40), o -> o instanceof Integer);
+            .define("loyaltyCooldowns", "140,80,60,40");
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 
@@ -84,6 +82,10 @@ public class Config {
         shieldCrouch = SHIELD_CROUCH.getAsBoolean();
         tridentRiptideFixIfDatapack = TRIDENT_RIPTIDE_FIX_IF_DATAPACK.getAsBoolean();
         playerResetOnDeath = PLAYER_RESET_ON_DEATH.getAsBoolean();
-        loyaltyCooldowns = LOYALTY_COOLDOWNS.get();
+        String[] stringEnchantmentCooldownArray =  LOYALTY_COOLDOWNS.get().split(",");
+        loyaltyCooldowns = new int[stringEnchantmentCooldownArray.length];
+        for(int i = 0; i < stringEnchantmentCooldownArray.length; i++){
+            loyaltyCooldowns[i] = Integer.parseInt(stringEnchantmentCooldownArray[i]);
+        }
     }
 }
