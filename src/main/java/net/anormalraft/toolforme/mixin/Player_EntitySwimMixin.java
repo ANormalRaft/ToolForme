@@ -1,5 +1,6 @@
 package net.anormalraft.toolforme.mixin;
 
+import net.anormalraft.toolforme.Config;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -30,13 +31,15 @@ public abstract class Player_EntitySwimMixin extends Entity implements IEntityEx
     //Allows to cancel sprint-swimming by crouching whilst holding a shield
     @Inject(method = "updateSwimming", at = @At("HEAD"), cancellable = true)
     public void enableShieldSwimInterrupt(CallbackInfo ci){
-        if((Entity)(Object)this instanceof Player){
-            if(this.isSwimming()){
-                this.setSwimming(this.isSprinting() && (this.isInWater() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && !this.isPassenger() && !(StreamSupport.stream(this.getHandSlots().spliterator(), false).anyMatch(e -> e.getItem() instanceof ShieldItem) && this.isDescending()));
-            } else {
-                this.setSwimming(this.isSprinting() && (this.isUnderWater() || this.canStartSwimming()) && !this.isPassenger() && !this.isDescending());
+        if(Config.SHIELD_CROUCH.get()) {
+            if ((Entity) (Object) this instanceof Player) {
+                if (this.isSwimming()) {
+                    this.setSwimming(this.isSprinting() && (this.isInWater() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && !this.isPassenger() && !(StreamSupport.stream(this.getHandSlots().spliterator(), false).anyMatch(e -> e.getItem() instanceof ShieldItem) && this.isDescending()));
+                } else {
+                    this.setSwimming(this.isSprinting() && (this.isUnderWater() || this.canStartSwimming()) && !this.isPassenger() && !this.isDescending());
+                }
+                ci.cancel();
             }
-            ci.cancel();
         }
     }
 }

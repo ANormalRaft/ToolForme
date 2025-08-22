@@ -2,10 +2,8 @@
   "required": true,
   "package": "net.anormalraft.toolforme.mixin",
   "compatibilityLevel": "JAVA_21",
-  "plugin": "net.anormalraft.toolforme.mixin.ToolFormeMixinPlugin",
   "mixins": [
     "InventoryMixin",
-    "MinecraftMixin",
     "Player_EntitySwimMixin",
     "SlotMixin",
     "ThrownTridentMixin",
@@ -13,6 +11,7 @@
     "TridentRiptideFixIfDatapackMixin"
   ],
   "client": [
+    "MinecraftMixin",
     "LocalPlayerMixin"
   ],
   "mixinextras": {

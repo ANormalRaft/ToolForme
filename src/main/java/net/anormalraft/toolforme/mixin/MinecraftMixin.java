@@ -1,6 +1,7 @@
 package net.anormalraft.toolforme.mixin;
 
 import com.mojang.blaze3d.platform.WindowEventHandler;
+import net.anormalraft.toolforme.Config;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -34,19 +35,27 @@ public abstract class MinecraftMixin extends ReentrantBlockableEventLoop<Runnabl
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 2))
     public boolean stepIntoKeyUseCheck(KeyMapping instance){
-        return false;
+        if(Config.SHIELD_CROUCH.get()) {
+            return false;
+        } else {
+            return instance.isDown();
+        }
     }
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;releaseUsingItem(Lnet/minecraft/world/entity/player/Player;)V"))
     public void denyUseItemCancel(MultiPlayerGameMode instance, Player player){
-        if(player.isCrouching()){
-            if(!(player.getUseItem().getItem() instanceof ShieldItem)) {
-                if(!this.options.keyUse.isDown()) {
+        if(Config.SHIELD_CROUCH.get()) {
+            if (player.isCrouching()) {
+                if (!(player.getUseItem().getItem() instanceof ShieldItem)) {
+                    if (!this.options.keyUse.isDown()) {
+                        instance.releaseUsingItem(player);
+                    }
+                }
+            } else if (!(player.getUseItem().getItem() instanceof ShieldItem)) {
+                if (!this.options.keyUse.isDown()) {
                     instance.releaseUsingItem(player);
                 }
-            }
-        } else if(!(player.getUseItem().getItem() instanceof ShieldItem)) {
-            if(!this.options.keyUse.isDown()) {
+            } else {
                 instance.releaseUsingItem(player);
             }
         } else {

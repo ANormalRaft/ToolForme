@@ -98,7 +98,7 @@ public class ToolForme {
             ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
 
             //Shield section (part of the code responsible for enabling shield on crouch. The rest is in MinecraftMixin)
-            if(Config.shieldCrouch) {
+            if(Config.SHIELD_CROUCH.get()) {
                 ItemStack offhandItem = player.getOffhandItem();
                 ItemStack mainhandItem = player.getMainHandItem();
                 if (player.isCrouching() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {

@@ -1,6 +1,7 @@
 package net.anormalraft.toolforme.mixin;
 
 import com.mojang.authlib.GameProfile;
+import net.anormalraft.toolforme.Config;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
@@ -18,6 +19,10 @@ public class LocalPlayerMixin extends AbstractClientPlayer {
 
     @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0))
     public boolean removeSpeedDropFromShieldUse(LocalPlayer instance){
-        return (this.isUsingItem() && !(this.getUseItem().getItem() instanceof ShieldItem));
+        if(Config.SHIELD_CROUCH.get()) {
+            return (this.isUsingItem() && !(this.getUseItem().getItem() instanceof ShieldItem));
+        } else {
+            return instance.isUsingItem();
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.anormalraft.toolforme.Config;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,9 +29,11 @@ public class TridentRiptideFixIfDatapackMixin extends Item {
     //Allow Riptide tridents to be thrown
     @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/InteractionResultHolder;fail(Ljava/lang/Object;)Lnet/minecraft/world/InteractionResultHolder;", ordinal = 1), cancellable = true)
     public void allowRiptideThrow(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir){
-        ItemStack itemstack = player.getItemInHand(hand);
-        player.startUsingItem(hand);
-        cir.setReturnValue(InteractionResultHolder.consume(itemstack));
+        if(Config.TRIDENT_RIPTIDE_FIX_IF_DATAPACK.get()) {
+            ItemStack itemstack = player.getItemInHand(hand);
+            player.startUsingItem(hand);
+            cir.setReturnValue(InteractionResultHolder.consume(itemstack));
+        }
     }
 
     //Remove inconvenient item use condition restriction
@@ -39,7 +42,11 @@ public class TridentRiptideFixIfDatapackMixin extends Item {
     @Expression("f > 0.0")
     @ModifyExpressionValue(method = "releaseUsing", at = @At(value = "MIXINEXTRAS:EXPRESSION", ordinal = 0))
     private boolean modifyInitialCheck(boolean original){
-        return false;
+        if(Config.TRIDENT_RIPTIDE_FIX_IF_DATAPACK.get()) {
+            return false;
+        } else {
+            return original;
+        }
     }
 
     //Allow for Loyalty through riptide
@@ -47,7 +54,11 @@ public class TridentRiptideFixIfDatapackMixin extends Item {
     @Expression("f == 0.0")
     @ModifyExpressionValue(method = "releaseUsing", at = @At("MIXINEXTRAS:EXPRESSION"))
     private boolean allowLoyaltyThroughRiptide(boolean original, @Local(argsOnly = true) LivingEntity livingEntity){
-        return !(!original && livingEntity.isInWaterOrRain());
+        if(Config.TRIDENT_RIPTIDE_FIX_IF_DATAPACK.get()) {
+            return !(!original && livingEntity.isInWaterOrRain());
+        } else {
+            return original;
+        }
     }
 
     //Block throw if Riptide and player is in water condition
@@ -55,6 +66,10 @@ public class TridentRiptideFixIfDatapackMixin extends Item {
     @Expression("f > 0.0")
     @ModifyExpressionValue(method = "releaseUsing", at = @At(value = "MIXINEXTRAS:EXPRESSION", ordinal = 1))
     private boolean blockThrowConditionIfInWater(boolean original, @Local(argsOnly = true) LivingEntity livingEntity){
-        return original && livingEntity.isInWaterOrRain();
+        if(Config.TRIDENT_RIPTIDE_FIX_IF_DATAPACK.get()) {
+            return original && livingEntity.isInWaterOrRain();
+        } else {
+            return original;
+        }
     }
 }
