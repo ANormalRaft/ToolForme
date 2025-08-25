@@ -39,17 +39,23 @@ public class TridentMixin extends Item {
             //Applies a cooldown if the thrower is a player
             if (entityLiving instanceof Player) {
                 Stream<Holder<Enchantment>> itemEnchantmentStream = stack.getTagEnchantments().keySet().stream();
+
+                String[] stringEnchantmentCooldownArray =  Config.LOYALTY_COOLDOWNS.get().split(",");
+                int[] loyaltyCooldowns = new int[stringEnchantmentCooldownArray.length];
+                for(int i = 0; i < stringEnchantmentCooldownArray.length; i++){
+                    loyaltyCooldowns[i] = Integer.parseInt(stringEnchantmentCooldownArray[i]);
+                }
+
                 if (itemEnchantmentStream.noneMatch(enchantmentHolder -> enchantmentHolder.is(Enchantments.LOYALTY))) {
-                    ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[0]);
+                    ((Player) entityLiving).getCooldowns().addCooldown(this, loyaltyCooldowns[0]);
                 } else {
                     int loyaltyLevel =  stack.getTagEnchantments().getLevel(level.holderOrThrow(Enchantments.LOYALTY));
-                    System.out.println(loyaltyLevel);
                     if (loyaltyLevel == 1) {
-                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[1]);
+                        ((Player) entityLiving).getCooldowns().addCooldown(this, loyaltyCooldowns[1]);
                     } else if (loyaltyLevel == 2){
-                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[2]);
+                        ((Player) entityLiving).getCooldowns().addCooldown(this, loyaltyCooldowns[2]);
                     } else if (loyaltyLevel == 3){
-                        ((Player) entityLiving).getCooldowns().addCooldown(this, Config.loyaltyCooldowns[3]);
+                        ((Player) entityLiving).getCooldowns().addCooldown(this, loyaltyCooldowns[3]);
                     }
                 }
                 ci.cancel();

@@ -1,22 +1,28 @@
 package net.anormalraft.toolforme;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import net.anormalraft.toolforme.attachment.ModAttachments;
 import net.anormalraft.toolforme.command.ModCommands;
 import net.anormalraft.toolforme.component.ModDataComponents;
 import net.anormalraft.toolforme.networking.PayloadHousekeeping;
+import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingHashMapPayload;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
 import net.anormalraft.toolforme.networking.formeplayercooldownpayload.FormePlayerCooldownPayload;
 import net.anormalraft.toolforme.sound.ModSounds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -29,6 +35,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.regex.Pattern;
+
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
 import static net.anormalraft.toolforme.component.ModDataComponents.PREVIOUS_ITEM_DATA;
@@ -40,6 +50,8 @@ public class ToolForme {
     public static final String MODID = "toolforme";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
+    // Will Contain forme changing item mappings
+    public static HashMap<String, Item[]> bindingsHashMap = null;
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -73,6 +85,34 @@ public class ToolForme {
         event.register(ClientTasks.KEY_MAPPING.get());
     }
 
+    //Sync config of items that change forme on player login
+    @SubscribeEvent
+    public void onLogin(PlayerEvent.PlayerLoggedInEvent event){
+        bindingsHashMap = HashMap.newHashMap(3);
+        //Gson-ify bindings
+        JsonObject bindings = new Gson().fromJson(Config.BINDINGS.get(), JsonObject.class);
+        //Put Config details in HashMap
+        for(var entry : bindings.asMap().entrySet()){
+            //You cannot do like in KubeJS where you can use "matches()". You have to do all these steps due to Java devs
+            String output = entry.getValue().toString();
+            String stringPattern = output.substring(1, output.length()-1);
+            Pattern pattern = Pattern.compile(stringPattern);
+
+            Item[] allMatchesArray = BuiltInRegistries.ITEM.stream().filter((item) -> pattern.matcher(item.toString()).find()).toArray(Item[]::new);
+            bindingsHashMap.put(entry.getKey(), allMatchesArray);
+        }
+
+        Player player = event.getEntity();
+        ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
+        bindingsHashMap.forEach((k,v) -> {
+            ItemStack[] itemStackArray = new ItemStack[v.length];
+            for(int i=0; i < itemStackArray.length; i++){
+                itemStackArray[i] = v[i].getDefaultInstance();
+            }
+            PacketDistributor.sendToPlayer(serverPlayer, new BindingHashMapPayload(k, Arrays.asList(itemStackArray)));
+        });
+    }
+
     // Fire when pressing the mod's keybind. Event is on the NeoForge event bus only on the physical client
     @SubscribeEvent
     public void onClientTick(ClientTickEvent.Post event) {
@@ -82,7 +122,7 @@ public class ToolForme {
     //Cancels the use of the shield on right click
     @SubscribeEvent
     public void onPlayerInteractRightClick(PlayerInteractEvent.RightClickItem event){
-        if(Config.shieldCrouch) {
+        if(Config.SHIELD_CROUCH.get()) {
             if (event.getItemStack().getItem() instanceof ShieldItem) {
                 event.setCanceled(true);
             }
@@ -155,7 +195,7 @@ public class ToolForme {
 
     @SubscribeEvent
     public void onLivingDeathEvent(LivingDeathEvent event){
-        if(Config.playerResetOnDeath) {
+        if(Config.PLAYER_RESET_ON_DEATH.get()) {
             Entity deadEntity = event.getEntity();
             if (deadEntity instanceof ServerPlayer) {
                 ModCommands.resetPlayerData((ServerPlayer) deadEntity);

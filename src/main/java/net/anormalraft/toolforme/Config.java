@@ -14,18 +14,7 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-@EventBusSubscriber(modid = ToolForme.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
-
-    public static int formeTimer;
-    public static int formePlayerCooldown;
-    public static double multiplier;
-    public static JsonObject bindings;
-    public static HashMap<String, Item[]> bindingsHashMap = HashMap.newHashMap(3);
-    public static boolean shieldCrouch;
-    public static boolean tridentRiptideFixIfDatapack;
-    public static boolean playerResetOnDeath;
-    public static int[] loyaltyCooldowns;
 
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
@@ -58,34 +47,8 @@ public class Config {
             .define("playerResetOnDeath", true);
 
     public static final ModConfigSpec.ConfigValue<String> LOYALTY_COOLDOWNS = BUILDER
-            .comment("Array listing the cooldown timings in ticks (20 ticks = 1 second) that each level of loyalty should incur on a Forme Trident. The first number is for a trident without loyalty")
+            .comment("String listing the cooldown timings in ticks (20 ticks = 1 second) that each level of loyalty should incur on a Forme Trident. The first number is for a trident without loyalty")
             .define("loyaltyCooldowns", "140,80,60,40");
 
     public static final ModConfigSpec SPEC = BUILDER.build();
-
-    @SubscribeEvent
-    static void onLoad(final ModConfigEvent.Loading event) {
-        formeTimer = FORME_TIMER.get();
-        formePlayerCooldown = FORME_PLAYER_COOLDOWN.get();
-        multiplier = MULTIPLIER.get();
-        bindings = new Gson().fromJson(BINDINGS.get(), JsonObject.class);
-        //Put stuff in HashMap
-        for(var entry : bindings.asMap().entrySet()){
-            //You cannot do like in KubeJS where you can use "matches()". You have to do all these steps due to Java devs
-            String output = entry.getValue().toString();
-            String stringPattern = output.substring(1, output.length()-1);
-            Pattern pattern = Pattern.compile(stringPattern);
-
-            Item[] allMatchesArray = BuiltInRegistries.ITEM.stream().filter((item) -> pattern.matcher(item.toString()).find()).toArray(Item[]::new);
-            bindingsHashMap.put(entry.getKey(), allMatchesArray);
-        }
-        shieldCrouch = SHIELD_CROUCH.getAsBoolean();
-        tridentRiptideFixIfDatapack = TRIDENT_RIPTIDE_FIX_IF_DATAPACK.getAsBoolean();
-        playerResetOnDeath = PLAYER_RESET_ON_DEATH.getAsBoolean();
-        String[] stringEnchantmentCooldownArray =  LOYALTY_COOLDOWNS.get().split(",");
-        loyaltyCooldowns = new int[stringEnchantmentCooldownArray.length];
-        for(int i = 0; i < stringEnchantmentCooldownArray.length; i++){
-            loyaltyCooldowns[i] = Integer.parseInt(stringEnchantmentCooldownArray[i]);
-        }
-    }
 }

@@ -1,5 +1,7 @@
 package net.anormalraft.toolforme.networking;
 
+import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingHashMapPayload;
+import net.anormalraft.toolforme.networking.bindinghashmappayload.ClientBindingHashMapPayloadHandler;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.ClientFormeItemTimerPayloadHandler;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.ServerFormeItemTimerPayloadHandler;
@@ -41,6 +43,8 @@ public class PayloadHousekeeping {
                         ClientFormeItemTimerPayloadHandler::handleDataOnNetwork,
                         ServerFormeItemTimerPayloadHandler::handleDataOnNetwork
                 )
+        );
+        registrar.playToClient(BindingHashMapPayload.TYPE, BindingHashMapPayload.STREAM_CODEC, ClientBindingHashMapPayloadHandler::handleDataOnNetwork
         );
     }
 }

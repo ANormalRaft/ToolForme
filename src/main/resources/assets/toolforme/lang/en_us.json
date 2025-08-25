@@ -7,5 +7,6 @@
   "toolforme.shieldnetworking.failed": "Shield sync failed",
   "toolforme.networking.failedformeplayercooldown": "Player Forme Cooldown sync failed",
   "toolforme.networking.Itemstackpayloadfailed": "ItemStackPayload sync failed",
-  "toolforme.networking.failedformeitemtimercooldown": "Item Forme Timer sync failed"
+  "toolforme.networking.failedformeitemtimercooldown": "Item Forme Timer sync failed",
+  "toolforme.networking.BindingHashMapPayloadFailed": "Sending data to Client failed when updating the bindingsHashMap!"
 }
