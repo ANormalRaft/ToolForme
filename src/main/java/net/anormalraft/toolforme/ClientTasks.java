@@ -1,7 +1,5 @@
 package net.anormalraft.toolforme;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.anormalraft.toolforme.component.ModDataComponents;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
@@ -9,7 +7,6 @@ import net.anormalraft.toolforme.networking.formeplayercooldownpayload.FormePlay
 import net.anormalraft.toolforme.networking.itemstackpayload.ItemStackPayload;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -70,7 +67,7 @@ public class ClientTasks {
                     //Modify stats
                     double previousAttackDamageValue = previousItemData.value().getAttributeModifiers().modifiers().stream().filter(attributeEntry -> attributeEntry.modifier().is(ResourceLocation.parse("minecraft:base_attack_damage"))).findFirst().get().modifier().amount();
 
-                    ItemAttributeModifiers itemAttributeModifiers =  formeChangeItem.getAttributeModifiers().withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.parse("minecraft:base_attack_damage"),previousAttackDamageValue * 1.2 , AttributeModifier.Operation.ADD_VALUE),
+                    ItemAttributeModifiers itemAttributeModifiers =  formeChangeItem.getAttributeModifiers().withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.parse("minecraft:base_attack_damage"),previousAttackDamageValue * Config.MULTIPLIER.get() , AttributeModifier.Operation.ADD_VALUE),
                             EquipmentSlotGroup.MAINHAND);
 
                     formeChangeItem.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributeModifiers);

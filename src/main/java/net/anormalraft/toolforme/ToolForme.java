@@ -37,6 +37,7 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -92,10 +93,10 @@ public class ToolForme {
         bindingsHashMap = HashMap.newHashMap(3);
         //Gson-ify bindings
         JsonObject bindings = new Gson().fromJson(Config.BINDINGS.get(), JsonObject.class);
-        //Put Config details in HashMap
         for(var entry : bindings.asMap().entrySet()){
             //You cannot do like in KubeJS where you can use "matches()". You have to do all these steps due to Java devs
             String output = entry.getValue().toString();
+            //I don't know why the Value appears with the "", but not the key. Maybe somewhere in the conversions, the key lost them?
             String stringPattern = output.substring(1, output.length()-1);
             Pattern pattern = Pattern.compile(stringPattern);
 
