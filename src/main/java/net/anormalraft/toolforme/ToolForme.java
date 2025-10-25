@@ -37,6 +37,7 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
@@ -198,7 +199,7 @@ public class ToolForme {
         if(Config.PLAYER_RESET_ON_DEATH.get()) {
             Entity deadEntity = event.getEntity();
             if (deadEntity instanceof ServerPlayer) {
-                ModCommands.resetPlayerData((ServerPlayer) deadEntity);
+                ModCommands.resetPlayerDataOnDeath(Objects.requireNonNull(deadEntity.getServer()), (ServerPlayer) deadEntity);
             }
         }
     }
