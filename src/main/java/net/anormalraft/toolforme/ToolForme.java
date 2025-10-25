@@ -140,22 +140,7 @@ public class ToolForme {
 
             //Shield section (part of the code responsible for enabling shield on crouch. The rest is in MinecraftMixin)
             if(Config.SHIELD_CROUCH.get()) {
-                ItemStack offhandItem = player.getOffhandItem();
-                ItemStack mainhandItem = player.getMainHandItem();
-                if (player.isCrouching() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
-                    //Offhand has priority
-                    if (offhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(offhandItem.getItem())) {
-                        if (!(player.getUseItem() == offhandItem)) {
-                            offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
-                        }
-                    } else {
-                        if(mainhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(mainhandItem.getItem())) {
-                            if (!(player.getUseItem() == mainhandItem)) {
-                                mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
-                            }
-                        }
-                    }
-                }
+                activateShieldOnCrouch(player);
             }
 
             //Forme section
@@ -190,6 +175,25 @@ public class ToolForme {
                 }
 //            throw new NoSuchElementException("No Forme Change item was found in inventory on item forme timer running out");
                 player.displayClientMessage(Component.literal("Pick up your dropped Forme Item or reset your ToolForme timers with commands"), true);
+            }
+        }
+    }
+
+    public void activateShieldOnCrouch(Player player){
+        ItemStack offhandItem = player.getOffhandItem();
+        ItemStack mainhandItem = player.getMainHandItem();
+        if (player.isShiftKeyDown() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
+            //Offhand has priority
+            if (offhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(offhandItem.getItem())) {
+                if (!(player.getUseItem() == offhandItem)) {
+                    offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
+                }
+            } else {
+                if(mainhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(mainhandItem.getItem())) {
+                    if (!(player.getUseItem() == mainhandItem)) {
+                        mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
+                    }
+                }
             }
         }
     }

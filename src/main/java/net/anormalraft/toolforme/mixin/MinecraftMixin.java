@@ -45,7 +45,7 @@ public abstract class MinecraftMixin extends ReentrantBlockableEventLoop<Runnabl
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;releaseUsingItem(Lnet/minecraft/world/entity/player/Player;)V"))
     public void denyUseItemCancel(MultiPlayerGameMode instance, Player player){
         if(Config.SHIELD_CROUCH.get()) {
-            if (player.isCrouching()) {
+            if (player.isShiftKeyDown()) {
                 if (!(player.getUseItem().getItem() instanceof ShieldItem)) {
                     if (!this.options.keyUse.isDown()) {
                         instance.releaseUsingItem(player);
