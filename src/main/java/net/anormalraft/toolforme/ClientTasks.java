@@ -21,17 +21,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
@@ -146,6 +142,8 @@ public class ClientTasks {
                     } else {
                         player.displayClientMessage(Component.literal("This item cannot change Forme"), true);
                     }
+                } else {
+                    player.displayClientMessage(Component.literal("No item detected in the main hand"), true);
                 }
             }
         }

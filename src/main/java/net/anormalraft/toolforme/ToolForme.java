@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import net.anormalraft.toolforme.attachment.ModAttachments;
 import net.anormalraft.toolforme.command.ModCommands;
 import net.anormalraft.toolforme.component.ModDataComponents;
+import net.anormalraft.toolforme.mixin.LivingEntityMixin;
 import net.anormalraft.toolforme.networking.PayloadHousekeeping;
 import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingHashMapPayload;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
@@ -15,6 +16,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +25,7 @@ import net.minecraft.world.item.ShieldItem;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingSwapItemsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -180,6 +184,7 @@ public class ToolForme {
         }
     }
 
+    //Helper method that handles some parts of the logic of allowing shielding with crouching
     public void activateShieldOnCrouch(Player player){
         ItemStack offhandItem = player.getOffhandItem();
         ItemStack mainhandItem = player.getMainHandItem();
@@ -199,6 +204,7 @@ public class ToolForme {
         }
     }
 
+    //Reset player data on death if config enabled
     @SubscribeEvent
     public void onLivingDeathEvent(LivingDeathEvent event){
         if(Config.PLAYER_RESET_ON_DEATH.get()) {
@@ -206,6 +212,19 @@ public class ToolForme {
             if (deadEntity instanceof ServerPlayer) {
                 ModCommands.resetPlayerDataOnDeath(Objects.requireNonNull(deadEntity.getServer()), (ServerPlayer) deadEntity);
             }
+        }
+    }
+
+    //Impede Hand Swapping (F key) with a Forme item
+    @SubscribeEvent
+    public void onSwapItemsEvent(LivingSwapItemsEvent.Hands event){
+        LivingEntity livingEntity = event.getEntity();
+        if(livingEntity.getItemBySlot(EquipmentSlot.MAINHAND).has(PREVIOUS_ITEM_DATA.value()) || livingEntity.getItemBySlot(EquipmentSlot.OFFHAND).has(PREVIOUS_ITEM_DATA.value())){
+            //Thanks to StellaNera for pointing out this downcasting trick (the declared variable after the target can be used immediately)
+            if(livingEntity instanceof Player player){
+                player.displayClientMessage(Component.literal("This Forme cannot be moved"), true);
+            }
+            event.setCanceled(true);
         }
     }
 }

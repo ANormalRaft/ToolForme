@@ -32,6 +32,7 @@ public abstract class Player_EntitySwimMixin extends Entity implements IEntityEx
     @Inject(method = "updateSwimming", at = @At("HEAD"), cancellable = true)
     public void enableShieldSwimInterrupt(CallbackInfo ci){
         if(Config.SHIELD_CROUCH.get()) {
+            //Note: Probably the only way to downcast when mixins are involved
             if ((Entity) (Object) this instanceof Player) {
                 if (this.isSwimming()) {
                     this.setSwimming(this.isSprinting() && (this.isInWater() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && !this.isPassenger() && !(StreamSupport.stream(this.getHandSlots().spliterator(), false).anyMatch(e -> e.getItem() instanceof ShieldItem) && this.isDescending()));
