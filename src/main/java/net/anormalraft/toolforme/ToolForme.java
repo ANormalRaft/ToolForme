@@ -101,11 +101,19 @@ public class ToolForme {
             //You cannot do like in KubeJS where you can use "matches()". You have to do all these steps due to Java devs
             String output = entry.getValue().toString();
             //I don't know why the Value appears with the "", but not the key. Maybe somewhere in the conversions, the key lost them?
-            String stringPattern = output.substring(1, output.length()-1);
-            Pattern pattern = Pattern.compile(stringPattern);
-
-            Item[] allMatchesArray = BuiltInRegistries.ITEM.stream().filter((item) -> pattern.matcher(item.toString()).find()).toArray(Item[]::new);
-            bindingsHashMap.put(entry.getKey(), allMatchesArray);
+            String stringValue = output.substring(1, output.length()-1);
+            //Array value
+            if(stringValue.charAt(0) == '['){
+                String stringWishlist = stringValue.substring(1, stringValue.length() -1);
+                String[] stringArray = stringWishlist.split(", ");
+                Item[] allMatchesArray = BuiltInRegistries.ITEM.stream().filter((item) -> Arrays.asList(stringArray).contains(item.toString())).toArray(Item[]::new);
+                bindingsHashMap.put(entry.getKey(), allMatchesArray);
+            //Regex value
+            } else {
+                Pattern pattern = Pattern.compile(stringValue);
+                Item[] allMatchesArray = BuiltInRegistries.ITEM.stream().filter((item) -> pattern.matcher(item.toString()).find()).toArray(Item[]::new);
+                bindingsHashMap.put(entry.getKey(), allMatchesArray);
+            }
         }
 
         Player player = event.getEntity();

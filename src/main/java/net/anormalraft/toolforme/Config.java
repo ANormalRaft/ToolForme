@@ -20,8 +20,8 @@ public class Config {
             .defineInRange("multiplier", 1.25, 0.0, Double.MAX_VALUE);
 
     public static final ModConfigSpec.ConfigValue<String> BINDINGS = BUILDER
-            .comment("String that stores information about what Forme (Item id) is applied to what items (RegEx) (You can use an online regex tester to find out if your regex matches your desired item ids). Follow the syntax of the default value closely. \nDefault: \"{\\\"minecraft:trident\\\": \\\"shovel$\\\", \\\"minecraft:mace\\\": \\\"_axe$\\\"}\"")
-            .define("bindings", "{\"minecraft:trident\": \"shovel$\", \"minecraft:mace\": \"_axe$\"}");
+            .comment("String that stores information about what Forme (Item id) is applied to what items (either RegEx or strictly formatted list). Follow the syntax of the default value closely. \nDefault:  \"{\\\"minecraft:trident\\\": \\\"shovel$\\\", \\\"minecraft:mace\\\": \\\"[minecraft:wooden_axe, minecraft:stone_axe, minecraft:golden_axe]\\\"}\"")
+            .define("bindings", "{\"minecraft:trident\": \"shovel$\", \"minecraft:mace\": \"[minecraft:wooden_axe, minecraft:stone_axe, minecraft:golden_axe]\"}");
 
     public static final ModConfigSpec.BooleanValue SHIELD_CROUCH = BUILDER
             .comment("Should the shield be only activated on crouch instead of right click. Will disable right click for the shield. \nDefault: false")
