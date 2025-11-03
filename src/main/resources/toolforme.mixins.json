@@ -8,6 +8,7 @@
     "Player_EntitySwimMixin",
     "SlotMixin",
     "ThrownTridentMixin",
+    "ToolbeltMixin",
     "TridentMixin",
     "TridentRiptideFixIfDatapackMixin"
   ],
