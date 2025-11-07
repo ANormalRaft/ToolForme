@@ -1,11 +1,9 @@
 package net.anormalraft.toolforme.networking.formeplayercooldownpayload;
 
-import net.anormalraft.toolforme.networking.itemstackpayload.ItemStackPayload;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 

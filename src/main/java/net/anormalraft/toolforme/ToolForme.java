@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import net.anormalraft.toolforme.attachment.ModAttachments;
 import net.anormalraft.toolforme.command.ModCommands;
 import net.anormalraft.toolforme.component.ModDataComponents;
-import net.anormalraft.toolforme.mixin.LivingEntityMixin;
 import net.anormalraft.toolforme.networking.PayloadHousekeeping;
 import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingHashMapPayload;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
@@ -41,7 +40,6 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 

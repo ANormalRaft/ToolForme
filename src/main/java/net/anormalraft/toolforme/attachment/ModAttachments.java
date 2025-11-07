@@ -45,16 +45,4 @@ public class ModAttachments {
             PacketDistributor.sendToPlayer(serverPlayer, new FormePlayerCooldownPayload(1));
         }
     }
-
-//    @SubscribeEvent
-    //Attempt to copy data on death
-//    public static void onPlayerClone(PlayerEvent.Clone event){
-//        if(event.isWasDeath() && event.getOriginal().hasData(FORMEITEMTIMER)){
-//            Player player = event.getEntity();
-//            ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
-//
-//            PacketDistributor.sendToPlayer(serverPlayer, new FormeItemTimerPayload(-100));
-//            System.out.println("PEEEEEEEEEEEEEEEE "+ event.getOriginal().getData(FORMEITEMTIMER));
-//        }
-//    }
 }

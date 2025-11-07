@@ -29,6 +29,7 @@ public class TridentMixin extends Item {
         super(properties);
     }
 
+    //Idea from Combat+ Core mod
     //Impedes the removal of the ItemStack in hand when throwing a trident without loyalty and imposes a cooldown instead. This stops the trident from being lost accidentally when it is the Forme item
     //Will not trigger in creative because that's where this code is in the original releaseUsing
     @Inject(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;removeItem(Lnet/minecraft/world/item/ItemStack;)V"), cancellable = true)

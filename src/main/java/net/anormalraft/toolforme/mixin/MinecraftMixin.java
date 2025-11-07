@@ -9,7 +9,6 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ShieldItem;
 import net.neoforged.neoforge.client.extensions.IMinecraftExtension;
 import org.spongepowered.asm.mixin.Final;
