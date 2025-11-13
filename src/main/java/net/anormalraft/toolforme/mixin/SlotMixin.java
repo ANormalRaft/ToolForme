@@ -17,6 +17,7 @@ public abstract class SlotMixin {
 
     @Shadow public abstract ItemStack getItem();
 
+    //Impede the player from manually moving the Forme item from its slot
     @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true)
     public void denyPickup(Player player, CallbackInfoReturnable<Boolean> cir){
         if(this.getItem().has(PREVIOUS_ITEM_DATA.value())){

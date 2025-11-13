@@ -20,6 +20,7 @@ public abstract class InventoryMixin {
 
     @Shadow @Final public Player player;
 
+    //Disallow dropping a Forme item
     @Inject(method = "removeItem(II)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"), cancellable = true)
     public void denyFormeRemoval(int index, int count, CallbackInfoReturnable<ItemStack> cir){
         if(this.getItem(index).has(PREVIOUS_ITEM_DATA.value())){

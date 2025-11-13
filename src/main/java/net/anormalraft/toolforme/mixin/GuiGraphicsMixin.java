@@ -24,6 +24,8 @@ public abstract class GuiGraphicsMixin {
 
     @Shadow public abstract void fill(RenderType renderType, int minX, int minY, int maxX, int maxY, int z, int color);
 
+    @Shadow public abstract void fillGradient(RenderType renderType, int x1, int y1, int x2, int y2, int colorFrom, int colorTo, int z);
+
     @Inject(method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))
     public void renderItemCooldown(Font font, ItemStack stack, int x, int y, String text, CallbackInfo ci, @Local LocalPlayer localPlayer){
         if(stack.has(PREVIOUS_ITEM_DATA.value())) {
@@ -33,7 +35,7 @@ public abstract class GuiGraphicsMixin {
             //Used code used for the item cooldown render found in the same method
             int i1 = y + Mth.floor(16.0F * (1.0F - f));
             int j1 = i1 + Mth.ceil(16.0F * f);
-            this.fill(RenderType.gui(), x, i1, x + 16, j1, 0, FastColor.ARGB32.color(255, 210, 0));
+            this.fillGradient(RenderType.gui(), x, i1, x + 16, j1, FastColor.ARGB32.color(90, 217, 177), FastColor.ARGB32.color(169, 36, 230), 0);
         }
     }
 }

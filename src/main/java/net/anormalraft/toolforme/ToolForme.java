@@ -226,7 +226,7 @@ public class ToolForme {
     public void onSwapItemsEvent(LivingSwapItemsEvent.Hands event){
         LivingEntity livingEntity = event.getEntity();
         if(livingEntity.getItemBySlot(EquipmentSlot.MAINHAND).has(PREVIOUS_ITEM_DATA.value()) || livingEntity.getItemBySlot(EquipmentSlot.OFFHAND).has(PREVIOUS_ITEM_DATA.value())){
-            //Thanks to StellaNera for pointing out this downcasting trick (the declared variable after the target can be used immediately)
+            //Thanks to StellaNera for pointing out this downcasting shortcut (the declared variable after the target can be used immediately)
             if(livingEntity instanceof Player player){
                 player.displayClientMessage(Component.literal("This Forme cannot be moved"), true);
             }
