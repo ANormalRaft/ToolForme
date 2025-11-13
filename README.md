@@ -1,4 +1,4 @@
-# Toolforme
+# ToolForme
 A mod that allows an item to momentarily become another. Inspired by the "empowered state" mechanic present in various video games
 
 ## What it do tho?
