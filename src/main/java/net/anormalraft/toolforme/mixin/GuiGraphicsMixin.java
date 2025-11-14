@@ -35,7 +35,8 @@ public abstract class GuiGraphicsMixin {
             //Used code used for the item cooldown render found in the same method
             int i1 = y + Mth.floor(16.0F * (1.0F - f));
             int j1 = i1 + Mth.ceil(16.0F * f);
-            this.fillGradient(RenderType.gui(), x, i1, x + 16, j1, FastColor.ARGB32.color(90, 217, 177), FastColor.ARGB32.color(169, 36, 230), 0);
+            //z at -75 successfully goes behind ItemStacks with more than 1 item count. If I do -100, it doesn't show for items of count 1
+            this.fillGradient(RenderType.gui(), x, i1, x + 16, j1, FastColor.ARGB32.color(90, 217, 177), FastColor.ARGB32.color(169, 36, 230), -75);
         }
     }
 }

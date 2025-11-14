@@ -1,5 +1,5 @@
 # ToolForme
-A mod that allows an item to momentarily become another. Inspired by the "empowered state" mechanic present in various video games
+A mod that allows an item to momentarily become another. Inspired by the "empowered state" mechanic present in various video games. Meant to be used with tools/weapons
 
 ## What it do tho?
  When the mod's keybind is pressed, if the item in the mainhand can be transformed, it shall change form:
@@ -19,7 +19,7 @@ A mod that allows an item to momentarily become another. Inspired by the "empowe
 
 - You cannot have multiple items transform at the same time, only one will be able to be transformed
 
-- In order to avoid having to extensively search the *Forme item* when the Item Timer finishes, the mod attempts to lock it to the slot it was transformed in 
+- In order to avoid having to extensively search the *Forme item* when the Item Timer finishes, and since the mod was made to be useful with only tools/weapons, the mod attempts to lock the *Forme item* to the slot it was transformed in
 
 **Be warned:** there will 100% be mods that circumvent this (currently, the only such mod that has compat with Toolforme on this matter is Tool Belt). If the *Forme item* cannot be found, the mod makes the player responsible to find any *Forme item* to transform back into its base form; locking their transformation ability in the meantime. If the item disappears, welp let's just hope that an operator is on so they can use `/toolforme playerReset playername` :P
 

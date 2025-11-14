@@ -28,10 +28,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
-import static net.anormalraft.toolforme.component.ModDataComponents.FORME_BOOL;
+//import static net.anormalraft.toolforme.component.ModDataComponents.FORME_BOOL;
 import static net.anormalraft.toolforme.component.ModDataComponents.PREVIOUS_ITEM_DATA;
 
 public class ClientTasks {
@@ -42,43 +44,51 @@ public class ClientTasks {
     public static final Lazy<KeyMapping> KEY_MAPPING = Lazy.of(() -> new KeyMapping("key.toolforme.changeforme", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O, "key.categories.toolforme.toolformecategory"));
 
     //Helper Method. Search for items in the server config and apply the FORME_BOOL to them
-    public static ItemStack[] searchAndPrepareIfItemStackInConfig(ItemStack itemStack){
+    public static ItemStack[] searchAndPrepareIfItemStackInConfig(ItemStack baseItemStack, Player player){
         //Data to add (the .copy() is important, or else you get stackoverflow)
-        ModDataComponents.PreviousItemData previousItemData = new ModDataComponents.PreviousItemData(itemStack.copy());
-        ModDataComponents.FormeBoolRecord formeBool = new ModDataComponents.FormeBoolRecord(true);
-        //Array for containment purposes
-        ItemStack[] itemStackArray = {itemStack, null};
+        ModDataComponents.PreviousItemData previousItemData = new ModDataComponents.PreviousItemData(baseItemStack.copy());
+        //Array for containment purposes. Index 0 is for the base item. Index 1 is for Forme item. Index 2 is for a carrot that will hold the name of the detected incorrect string (if any) as its custom name
+        ItemStack[] itemStackArray = {baseItemStack, null, null};
+
         //Loop Config Map
         clientBindingsHashMap.forEach((key, itemArray) -> {
             for(Item item : itemArray) {
-                if(item.toString().equals(itemStack.getItem().toString())) {
-                    //Modify base item with FORME_BOOL
-                    itemStack.set(FORME_BOOL.value(), new ModDataComponents.FormeBoolRecord(true));
-
+                if(item.toString().equals(baseItemStack.getItem().toString())) {
                     //Prepare Forme ItemStack
-                    ItemStack formeChangeItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(key)).getDefaultInstance();
-                    formeChangeItem.set(PREVIOUS_ITEM_DATA.value(), previousItemData);
-                    formeChangeItem.set(FORME_BOOL.value(), formeBool);
+                    ItemStack formeChangeItemStack = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(key)).getDefaultInstance();
+                    //Insert previous itemstack data
+                    formeChangeItemStack.set(PREVIOUS_ITEM_DATA.value(), previousItemData);
+                    //Same count (Shouldn't be important at all, but is here for consistency's sake)
+                    formeChangeItemStack.setCount(baseItemStack.getCount());
 
-                    //Modify stats
-                    double previousAttackDamageValue = previousItemData.value().getAttributeModifiers().modifiers().stream().filter(attributeEntry -> attributeEntry.modifier().is(ResourceLocation.parse("minecraft:base_attack_damage"))).findFirst().get().modifier().amount();
+                    //Modify attack damage section
+                    Optional<ItemAttributeModifiers.Entry> previousAttackDamage = previousItemData.value().getAttributeModifiers().modifiers().stream().filter(attributeEntry -> attributeEntry.modifier().is(ResourceLocation.parse("minecraft:base_attack_damage"))).findFirst();
 
-                    ItemAttributeModifiers itemAttributeModifiers =  formeChangeItem.getAttributeModifiers().withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.parse("minecraft:base_attack_damage"),previousAttackDamageValue * Config.MULTIPLIER.get() , AttributeModifier.Operation.ADD_VALUE),
-                            EquipmentSlotGroup.MAINHAND);
+                    //Important check for items that do not have attack damage
+                    if(previousAttackDamage.isPresent()) {
+                        ItemAttributeModifiers itemAttributeModifiers = formeChangeItemStack.getAttributeModifiers().withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.parse("minecraft:base_attack_damage"), previousAttackDamage.get().modifier().amount() * Config.MULTIPLIER.get(), AttributeModifier.Operation.ADD_VALUE),
+                                EquipmentSlotGroup.MAINHAND);
 
-                    formeChangeItem.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributeModifiers);
+                        formeChangeItemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributeModifiers);
+                    }
 
                     //Apply existing enchantments
-                    EnchantmentHelper.setEnchantments(formeChangeItem, previousItemData.value().getTagEnchantments());
+                    EnchantmentHelper.setEnchantments(formeChangeItemStack, previousItemData.value().getTagEnchantments());
 
-                    //Apply custom name
-                    formeChangeItem.set(DataComponents.CUSTOM_NAME, previousItemData.value().getComponents().get(DataComponents.CUSTOM_NAME));
+                    //Apply custom name, or if invalid, put erroneous name of the Forme item id in the error carrot
+                    if(formeChangeItemStack.getCount() == 0 || formeChangeItemStack.getItem().toString().equals("minecraft:air")){
+                        ItemStack errorItemStack = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("minecraft:carrot")).getDefaultInstance();
+                        errorItemStack.set(DataComponents.CUSTOM_NAME, Component.literal(key));
+                        itemStackArray[2] = errorItemStack;
+                    } else {
+                        formeChangeItemStack.set(DataComponents.CUSTOM_NAME, previousItemData.value().getComponents().get(DataComponents.CUSTOM_NAME));
+                    }
 
                     //Make unbreakable
-                    formeChangeItem.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
+                    formeChangeItemStack.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
 
                     //Shove it into the exported array
-                    itemStackArray[1] = formeChangeItem;
+                    itemStackArray[1] = formeChangeItemStack;
                 }
             }
         });
@@ -114,33 +124,37 @@ public class ClientTasks {
             if (player != null) {
                 ItemStack itemStack = player.getMainHandItem();
                 if (!itemStack.isEmpty()) {
-                    ItemStack[] itemStackArray = searchAndPrepareIfItemStackInConfig(itemStack);
+                    ItemStack[] itemStackArray = searchAndPrepareIfItemStackInConfig(itemStack, player);
                     ItemStack baseItem = itemStackArray[0].copy();
-                    if (baseItem.getComponents().has(FORME_BOOL.value())) {
-                        if(baseItem.getComponents().get(FORME_BOOL.value()).value()) {
-                            //Check to impede softlock when dying. For some reason, the client FORMEITEMTIMER doesn't sync on death, while its server counterpart does, as well as the entirety of FORMEPLAYERCOOLDOWN. This if statement takes the FORMEITEMTIMER out back, resets it to -1, and fires findItemAndApplyDataComponents
+                    //Check if the given base item isn't already a Forme item
+                    if (!baseItem.getComponents().has(PREVIOUS_ITEM_DATA.value())) {
+                        //Fires if the base Item wasn't found in the config
+                        if (itemStackArray[1] != null) {
+                            //Check to impede softlock when dying. For some reason, the client FORMEITEMTIMER doesn't sync on death, while its server counterpart does, as well as the entirety of FORMEPLAYERCOOLDOWN. This 'if' statement takes the FORMEITEMTIMER out back, resets it to -1, and fires switchBaseItemToToolFormeItem
                             if(!(player.getData(FORMEPLAYERCOOLDOWN) == 0 && player.getData(FORMEITEMTIMER) == 0)) {
                                 if (player.getData(FORMEPLAYERCOOLDOWN) <= 0 && player.getData(FORMEITEMTIMER) == -1) {
-                                    if (!baseItem.getComponents().has(PREVIOUS_ITEM_DATA.value())) {
+                                    //Abort if Forme item doesn't exist + message
+                                    if(!(itemStackArray[1].getCount() == 0 || itemStackArray[1].getItem().toString().equals("minecraft:air"))){
                                         switchBaseItemToToolFormeItem(itemStackArray, player);
                                     } else {
-                                        player.displayClientMessage(Component.literal("Item already in Forme change!"), true);
+                                        player.displayClientMessage(Component.literal("Forme Item id '" + itemStackArray[2].get(DataComponents.CUSTOM_NAME).getString() + "' doesn't exist!"), true);
                                     }
+
                                 } else {
                                     double minutesLeft = (double) player.getData(FORMEPLAYERCOOLDOWN) / 20 / 60;
                                     player.displayClientMessage(Component.literal("Forme change on cooldown for " + String.format("%.0f", Math.floor(minutesLeft)) + " minutes and " + String.format("%.0f", (minutesLeft - Math.floor(minutesLeft)) * 60) + " seconds"), true);
-//                                    System.out.println("FormePlayerCooldown: " + player.getData(FORMEPLAYERCOOLDOWN));
-//                                    System.out.println("FormeItemTimer: " + player.getData(FORMEITEMTIMER));
+    //                                    System.out.println("FormePlayerCooldown: " + player.getData(FORMEPLAYERCOOLDOWN));
+    //                                    System.out.println("FormeItemTimer: " + player.getData(FORMEITEMTIMER));
                                 }
                             } else {
                                 player.setData(FORMEITEMTIMER, -1);
                                 switchBaseItemToToolFormeItem(itemStackArray, player);
                             }
                         } else {
-                            player.displayClientMessage(Component.literal("This item's Forme has been sealed"), true);
+                            player.displayClientMessage(Component.literal("This item cannot change Forme"), true);
                         }
                     } else {
-                        player.displayClientMessage(Component.literal("This item cannot change Forme"), true);
+                        player.displayClientMessage(Component.literal("Item already in Forme change!"), true);
                     }
                 } else {
                     player.displayClientMessage(Component.literal("No item detected in the main hand"), true);
