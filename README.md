@@ -5,6 +5,7 @@ A mod that allows an item to momentarily become another. Inspired by the "empowe
  When the mod's keybind is pressed, if the item in the mainhand can be transformed, it shall change form:
 
 ![Transformation gif](extras/toolforme_show.gif)
+
 (Here, the Item Timer and Player Cooldown values have been vastly reduced from the default for demonstrative purposes)
 
   A depleting timer called the Item Timer will appear behind the transformed item (itself, called the *Forme item*) to indicate when the *Forme Item* will transform back to its base form. Then, another timer called the Player Cooldown will end, allowing for the base item to be transformed again. Pressing the mod's keybind while the Player Cooldown is not ready will display its remaining recharge time
