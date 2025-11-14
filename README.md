@@ -10,7 +10,7 @@ A mod that allows an item to momentarily become another. Inspired by the "empowe
   A depleting timer called the Item Timer will appear behind the transformed item (itself, called the *Forme item*) to indicate when the *Forme Item* will transform back to its base form. Then, another timer called the Player Cooldown will end, allowing for the base item to be transformed again. Pressing the mod's keybind while the Player Cooldown is not ready will display its remaining recharge time
 
   - The *Forme item* is unbreakable
-  - The *Forme item*'s damage attribute is the damage attribute of the base item multiplied by x1.25 (this multiplier is configurable)
+  - By default, the *Forme item*'s damage attribute is the damage attribute of the base item multiplied by x1.25 (this multiplier is configurable) (this entire feature can be disabled)
   - Any enchantments and custom names on the base item will transfer to the *Forme item* and back
   - The Item Timer and the Player Cooldown persist after being disconnected (they will be remembered)
 
@@ -31,7 +31,11 @@ A mod that allows an item to momentarily become another. Inspired by the "empowe
 Here is what you can modify in the config:
 - Item Timer
 - Player Cooldown
-- *Forme item* damage multiplier
+- Scaling (True by default)
+
+Whether or not to apply the mod's intended scaling formula. If false, the damage attribute of the *Forme item* will remain untouched. the Multiplier config will have no effect
+
+- Multiplier (Default: x1.25)
 - Bindings
 
 These are the specifications of what *Forme item* should be bound to what base items. Two formats exist: Regex and "super specific string that is formatted like a list" (see details in the actual config). Multiple base items can be bound to a *Forme item*
