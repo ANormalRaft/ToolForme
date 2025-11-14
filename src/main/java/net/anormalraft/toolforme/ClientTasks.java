@@ -61,15 +61,18 @@ public class ClientTasks {
                     //Same count (Shouldn't be important at all, but is here for consistency's sake)
                     formeChangeItemStack.setCount(baseItemStack.getCount());
 
-                    //Modify attack damage section
-                    Optional<ItemAttributeModifiers.Entry> previousAttackDamage = previousItemData.value().getAttributeModifiers().modifiers().stream().filter(attributeEntry -> attributeEntry.modifier().is(ResourceLocation.parse("minecraft:base_attack_damage"))).findFirst();
+                    //Perform damage scaling if enabled
+                    if(Config.SCALING.get()) {
+                        //Modify attack damage section
+                        Optional<ItemAttributeModifiers.Entry> previousAttackDamage = previousItemData.value().getAttributeModifiers().modifiers().stream().filter(attributeEntry -> attributeEntry.modifier().is(ResourceLocation.parse("minecraft:base_attack_damage"))).findFirst();
 
-                    //Important check for items that do not have attack damage
-                    if(previousAttackDamage.isPresent()) {
-                        ItemAttributeModifiers itemAttributeModifiers = formeChangeItemStack.getAttributeModifiers().withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.parse("minecraft:base_attack_damage"), previousAttackDamage.get().modifier().amount() * Config.MULTIPLIER.get(), AttributeModifier.Operation.ADD_VALUE),
-                                EquipmentSlotGroup.MAINHAND);
+                        //Important check for items that do not have attack damage
+                        if (previousAttackDamage.isPresent()) {
+                            ItemAttributeModifiers itemAttributeModifiers = formeChangeItemStack.getAttributeModifiers().withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(ResourceLocation.parse("minecraft:base_attack_damage"), previousAttackDamage.get().modifier().amount() * Config.MULTIPLIER.get(), AttributeModifier.Operation.ADD_VALUE),
+                                    EquipmentSlotGroup.MAINHAND);
 
-                        formeChangeItemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributeModifiers);
+                            formeChangeItemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, itemAttributeModifiers);
+                        }
                     }
 
                     //Apply existing enchantments

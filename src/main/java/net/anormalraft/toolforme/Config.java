@@ -8,15 +8,19 @@ public class Config {
 
     //These IntValues and DoubleValues have their defaults added by Neoforge in the config file
     public static final ModConfigSpec.IntValue FORME_ITEM_TIMER = BUILDER
-            .comment("The Item Timer, bound to the transformation's duration in ticks (20 ticks = 1 second)")
+            .comment("The Item Timer, bound to the transformation's duration in ticks (20 ticks = 1 second).")
             .defineInRange("formeItemTimer", 1800, 0, Integer.MAX_VALUE);
 
     public static final ModConfigSpec.IntValue FORME_PLAYER_COOLDOWN = BUILDER
-            .comment("The Player Cooldown, bound to the amount of time the player has to wait before being able to transform an item again in ticks. Shouldn't be lower than or equal to the formeItemTimer")
+            .comment("The Player Cooldown, bound to the amount of time the player has to wait before being able to transform an item again in ticks. Shouldn't be lower than or equal to the formeItemTimer.")
             .defineInRange("formePlayerCooldown", 3200, 0, Integer.MAX_VALUE);
 
+    public static final ModConfigSpec.BooleanValue SCALING = BUILDER
+            .comment("By default, the damage attribute of the Forme item will be a scaled value from the base item based on the multiplier (below). Should this scaling formula apply? If false, the damage attribute of the Forme item will remain untouched (the multiplier below will not be used). \nDefault: true")
+            .define("scaling", true);
+
     public static final ModConfigSpec.DoubleValue MULTIPLIER = BUILDER
-            .comment("The multiplier for the attack damage. An input of 1.25 means that the Forme item will have a damage attribute equal to its base form's damage (100%) + 25% of the base form's damage, resulting in a Forme item with a damage attribute equal to 125% of the base form's damage")
+            .comment("The multiplier for the attack damage. An input of 1.25 means that the Forme item will have a damage attribute equal to its base form's damage (100%) + 25% of the base form's damage, resulting in a Forme item with a damage attribute equal to 125% of the base form's damage.")
             .defineInRange("multiplier", 1.25, 0.0, Double.MAX_VALUE);
 
     public static final ModConfigSpec.ConfigValue<String> BINDINGS = BUILDER
