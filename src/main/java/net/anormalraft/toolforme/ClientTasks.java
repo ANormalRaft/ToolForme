@@ -97,7 +97,7 @@ public class ClientTasks {
         PacketDistributor.sendToServer(new ItemStackPayload(formeChangeItem));
 
         //Data attachment of the item's timer. Both the client and server need to be notified
-        int itemTimerValue = Config.FORME_TIMER.get();
+        int itemTimerValue = Config.FORME_ITEM_TIMER.get();
         player.setData(FORMEITEMTIMER, itemTimerValue);
         PacketDistributor.sendToServer(new FormeItemTimerPayload(itemTimerValue + 1));
 

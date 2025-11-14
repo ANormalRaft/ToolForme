@@ -30,7 +30,7 @@ public abstract class GuiGraphicsMixin {
     public void renderItemCooldown(Font font, ItemStack stack, int x, int y, String text, CallbackInfo ci, @Local LocalPlayer localPlayer){
         if(stack.has(PREVIOUS_ITEM_DATA.value())) {
             int playerCurrentItemCooldown = localPlayer.getData(FORMEITEMTIMER);
-            int maxItemCooldown = Config.FORME_TIMER.get();
+            int maxItemCooldown = Config.FORME_ITEM_TIMER.get();
             float f = Mth.clamp((float) playerCurrentItemCooldown /maxItemCooldown, 0.0F, 1.0F);
             //Used code used for the item cooldown render found in the same method
             int i1 = y + Mth.floor(16.0F * (1.0F - f));
