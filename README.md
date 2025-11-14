@@ -7,7 +7,7 @@ A mod that allows an item to momentarily become another. Inspired by the "empowe
 ![Transformation gif](extras/toolforme_show.gif)
 (Here, the Item Timer and Player Cooldown values have been vastly reduced from the default for demonstrative purposes)
 
-  A depleting timer called the Item Timer will appear behind the transformed item (itself, called the *Forme item*) to indicate when the *Forme Item* will transform back to its base form. Then, another timer called the Player Cooldown shall end, allowing for the base item to be transformed again. Pressing the mod's keybind while the Player Cooldown is not ready will display its remaining recharge time
+  A depleting timer called the Item Timer will appear behind the transformed item (itself, called the *Forme item*) to indicate when the *Forme Item* will transform back to its base form. Then, another timer called the Player Cooldown will end, allowing for the base item to be transformed again. Pressing the mod's keybind while the Player Cooldown is not ready will display its remaining recharge time
 
   - The *Forme item* is unbreakable
   - By default, the *Forme item* has its damage enhanced by x1.25
@@ -24,12 +24,12 @@ A mod that allows an item to momentarily become another. Inspired by the "empowe
 
 **Note:** the default config runs this command when a player dies, so you're only in trouble if the *Forme item* leaves the inventory by any other way 
 
-- Since the mod's Bindings config only handles item IDs without data components, there currently isn't a way to handle items that rely on data components to be properly defined; such as modular items
+- Since the mod's Bindings config only handles item IDs without data components, there isn't a way to handle items that rely on data components to be properly defined; such as modular items
 
 ## Configanigans
 Here is what you can modify in the config:
 - Item Timer
-- Player Cooldowns
+- Player Cooldown
 - *Forme item* damage multiplier
 - Bindings
 
