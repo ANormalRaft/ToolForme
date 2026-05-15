@@ -52,9 +52,3 @@ In order to keep a thrown *Forme item* trident within its slot, I opted to use t
 - Riptide fix (Disabled by default)
 
 Imagine having a trident that allows having Riptide and Loyalty at the same time. Riptide when you're in water, throw that thang when not in water. Unfortunately, I cannot provide the datapack that slaps some sense into the riptide component data to allow it to coexist with loyalty without making it non-disable-able, but I can make riptide tridents throwable :)) (that's what it does)
-
-- Shield Crouch (Disabled by default)
-
-Have you ever been frustrated by the fact that when you hold a trident and a shield, the trident activates first? Yeah, me too! This makes it so shields only activate on crouch and also disables the shield's 5-tick delay:
-
-![Shield Crouch gif](extras/shield_show.gif)
