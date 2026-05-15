@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
 
-public class ClientFormePlayerCooldownPayloadHandler {
+public class S2CFormePlayerCooldownPayloadHandler {
     public static void handleDataOnNetwork(final FormePlayerCooldownPayload formePlayerCooldownPayload, IPayloadContext context){
         // Do something with the data, on the main thread
         context.enqueueWork(() -> {
@@ -18,7 +18,7 @@ public class ClientFormePlayerCooldownPayloadHandler {
             if(player.getData(FORMEPLAYERCOOLDOWN) == 1){
                 ResourceLocation rl = ResourceLocation.tryParse("toolforme:flash_sound");
                 SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
-                player.playSound(soundEvent, 0.7f, 1f);
+                player.playSound(soundEvent, 0.6f, 1f);
                 player.displayClientMessage(Component.literal("Forme change available!"), true);
             }
             player.setData(FORMEPLAYERCOOLDOWN, formePlayerCooldownPayload.cooldownValue() - 1);

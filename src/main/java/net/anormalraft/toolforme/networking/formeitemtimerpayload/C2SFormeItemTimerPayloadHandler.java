@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
 
-public class ServerFormeItemTimerPayloadHandler {
+public class C2SFormeItemTimerPayloadHandler {
     public static void handleDataOnNetwork(final FormeItemTimerPayload formeItemTimerPayload, IPayloadContext context){
         // Do something with the data, on the main thread
         context.enqueueWork(() -> {

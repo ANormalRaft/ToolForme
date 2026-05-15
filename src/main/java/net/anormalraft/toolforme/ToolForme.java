@@ -6,27 +6,24 @@ import net.anormalraft.toolforme.attachment.ModAttachments;
 import net.anormalraft.toolforme.command.ModCommands;
 import net.anormalraft.toolforme.component.ModDataComponents;
 import net.anormalraft.toolforme.networking.PayloadHousekeeping;
-import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingHashMapPayload;
+import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingsPayload;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
 import net.anormalraft.toolforme.networking.formeplayercooldownpayload.FormePlayerCooldownPayload;
 import net.anormalraft.toolforme.sound.ModSounds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShieldItem;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingSwapItemsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.slf4j.Logger;
@@ -62,8 +59,6 @@ public class ToolForme {
     public ToolForme(IEventBus modEventBus, ModContainer modContainer) {
         //Listener for Custom Keybind
         modEventBus.addListener(this::registerBindings);
-        //Listener for Default Item Component injection (Unused)
-//        modEventBus.addListener(ModDataComponents::modifyComponents);
         //Listener for Payloads
         modEventBus.addListener(PayloadHousekeeping::registerPayload);
 
@@ -121,7 +116,7 @@ public class ToolForme {
             for(int i=0; i < itemStackArray.length; i++){
                 itemStackArray[i] = v[i].getDefaultInstance();
             }
-            PacketDistributor.sendToPlayer(serverPlayer, new BindingHashMapPayload(k, Arrays.asList(itemStackArray)));
+            PacketDistributor.sendToPlayer(serverPlayer, new BindingsPayload(k, Arrays.asList(itemStackArray)));
         });
     }
 
@@ -131,16 +126,6 @@ public class ToolForme {
         ClientTasks.checkModKeyPress(event);
     }
 
-    //Cancels the use of the shield on right click
-    @SubscribeEvent
-    public void onPlayerInteractRightClick(PlayerInteractEvent.RightClickItem event){
-        if(Config.SHIELD_CROUCH.get()) {
-            if (event.getItemStack().getItem() instanceof ShieldItem) {
-                event.setCanceled(true);
-            }
-        }
-    }
-
     //This event fires on both the client and server side. We want to check on which side it is fired on first by checking the level using a neoforge isClientSide method. Responsible for reverting to the original item upon timer expiration, and counting down timers
     @SubscribeEvent
     public void onPlayerTickEvent(PlayerTickEvent.Pre event){
@@ -148,13 +133,6 @@ public class ToolForme {
         if(!event.getEntity().level().isClientSide) {
             Player player = event.getEntity();
             ServerPlayer serverPlayer = player.getServer().getPlayerList().getPlayer(player.getUUID());
-
-            //Shield section (part of the code responsible for enabling shield on crouch. The rest is in MinecraftMixin)
-            if(Config.SHIELD_CROUCH.get()) {
-                activateShieldOnCrouch(player);
-            }
-
-            //Forme section
             int formeCooldown = player.getData(FORMEPLAYERCOOLDOWN);
             int itemCooldown = player.getData(FORMEITEMTIMER);
             //Forme Cooldown handling
@@ -186,26 +164,6 @@ public class ToolForme {
                 }
 //            throw new NoSuchElementException("No Forme Change item was found in inventory on item forme timer running out");
                 player.displayClientMessage(Component.literal("Pick up your dropped Forme Item or reset your ToolForme timers with commands"), true);
-            }
-        }
-    }
-
-    //Helper method that handles some parts of the logic of allowing shielding with crouching
-    public void activateShieldOnCrouch(Player player){
-        ItemStack offhandItem = player.getOffhandItem();
-        ItemStack mainhandItem = player.getMainHandItem();
-        if (player.isShiftKeyDown() && (offhandItem.getItem() instanceof ShieldItem || mainhandItem.getItem() instanceof ShieldItem)) {
-            //Offhand has priority
-            if (offhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(offhandItem.getItem())) {
-                if (!(player.getUseItem() == offhandItem)) {
-                    offhandItem.use(player.level(), player, InteractionHand.OFF_HAND);
-                }
-            } else {
-                if(mainhandItem.getItem() instanceof ShieldItem && !player.getCooldowns().isOnCooldown(mainhandItem.getItem())) {
-                    if (!(player.getUseItem() == mainhandItem)) {
-                        mainhandItem.use(player.level(), player, InteractionHand.MAIN_HAND);
-                    }
-                }
             }
         }
     }

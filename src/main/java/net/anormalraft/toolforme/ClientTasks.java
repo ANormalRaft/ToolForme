@@ -29,11 +29,9 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
-//import static net.anormalraft.toolforme.component.ModDataComponents.FORME_BOOL;
 import static net.anormalraft.toolforme.component.ModDataComponents.PREVIOUS_ITEM_DATA;
 
 public class ClientTasks {
@@ -104,7 +102,7 @@ public class ClientTasks {
         //Make a sound
         ResourceLocation rl = ResourceLocation.tryParse("toolforme:up_sound");
         SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
-        player.playSound(soundEvent, 0.7f, 1f);
+        player.playSound(soundEvent, 0.6f, 1f);
 
         //Send the item swap request to the server
         PacketDistributor.sendToServer(new ItemStackPayload(formeChangeItem));

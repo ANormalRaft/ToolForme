@@ -4,8 +4,6 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "InventoryMixin",
-    "LivingEntityMixin",
-    "Player_EntitySwimMixin",
     "SlotMixin",
     "ThrownTridentMixin",
     "ToolbeltMixin",
@@ -13,13 +11,9 @@
     "TridentRiptideFixIfDatapackMixin"
   ],
   "client": [
-    "GuiGraphicsMixin",
-    "LocalPlayerMixin",
-    "MinecraftMixin"
+    "GuiGraphicsMixin"
   ],
-  "mixinextras": {
-    "minVersion": "0.5.0-rc.2"
-  },
+  "mixinextras": {"minVersion": "0.5.4"},
   "injectors": {
     "defaultRequire": 1
   }

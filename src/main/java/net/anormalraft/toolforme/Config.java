@@ -39,9 +39,5 @@ public class Config {
             .comment("Makes it so riptide tridents can be thrown if the player isn't in water. Complements well with a datapack that changes riptide's enchantment data so that loyalty can be applied alongside it. \nDefault: false")
             .define("tridentRiptideFixIfDatapack", false);
 
-    public static final ModConfigSpec.BooleanValue SHIELD_CROUCH = BUILDER
-            .comment("Should the shield be only activated on crouch instead of right click. Will disable right click for the shield. \nDefault: false")
-            .define("shieldCrouch", false);
-
     public static final ModConfigSpec SPEC = BUILDER.build();
 }

@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEPLAYERCOOLDOWN;
 
-public class ServerFormePlayerCooldownPayloadHandler {
+public class C2SFormePlayerCooldownPayloadHandler {
     public static void handleDataOnNetwork(final FormePlayerCooldownPayload formePlayerCooldownPayload, IPayloadContext context){
         // Do something with the data, on the main thread
         context.enqueueWork(() -> {

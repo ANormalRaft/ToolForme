@@ -22,8 +22,6 @@ import static net.anormalraft.toolforme.component.ModDataComponents.PREVIOUS_ITE
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin {
 
-    @Shadow public abstract void fill(RenderType renderType, int minX, int minY, int maxX, int maxY, int z, int color);
-
     @Shadow public abstract void fillGradient(RenderType renderType, int x1, int y1, int x2, int y2, int colorFrom, int colorTo, int z);
 
     @Inject(method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V"))

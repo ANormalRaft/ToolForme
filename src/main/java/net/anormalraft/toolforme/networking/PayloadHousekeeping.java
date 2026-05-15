@@ -1,16 +1,15 @@
 package net.anormalraft.toolforme.networking;
 
-import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingHashMapPayload;
-import net.anormalraft.toolforme.networking.bindinghashmappayload.ClientBindingHashMapPayloadHandler;
-import net.anormalraft.toolforme.networking.formeitemtimerpayload.ClientFormeItemTimerPayloadHandler;
+import net.anormalraft.toolforme.networking.bindinghashmappayload.BindingsPayload;
+import net.anormalraft.toolforme.networking.bindinghashmappayload.S2CBindingsPayloadHandler;
+import net.anormalraft.toolforme.networking.formeitemtimerpayload.S2CFormeItemTimerPayloadHandler;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
-import net.anormalraft.toolforme.networking.formeitemtimerpayload.ServerFormeItemTimerPayloadHandler;
-import net.anormalraft.toolforme.networking.formeplayercooldownpayload.ClientFormePlayerCooldownPayloadHandler;
+import net.anormalraft.toolforme.networking.formeitemtimerpayload.C2SFormeItemTimerPayloadHandler;
+import net.anormalraft.toolforme.networking.formeplayercooldownpayload.S2CFormePlayerCooldownPayloadHandler;
 import net.anormalraft.toolforme.networking.formeplayercooldownpayload.FormePlayerCooldownPayload;
-import net.anormalraft.toolforme.networking.formeplayercooldownpayload.ServerFormePlayerCooldownPayloadHandler;
-import net.anormalraft.toolforme.networking.itemstackpayload.ClientItemStackPayloadHandler;
+import net.anormalraft.toolforme.networking.formeplayercooldownpayload.C2SFormePlayerCooldownPayloadHandler;
 import net.anormalraft.toolforme.networking.itemstackpayload.ItemStackPayload;
-import net.anormalraft.toolforme.networking.itemstackpayload.ServerItemStackPayloadHandler;
+import net.anormalraft.toolforme.networking.itemstackpayload.C2SItemStackPayloadHandler;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -21,31 +20,22 @@ public class PayloadHousekeeping {
     //Registers Payloads
     public static void registerPayload(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar("1");
-        registrar.playBidirectional(
-                ItemStackPayload.TYPE,
-                ItemStackPayload.STREAM_CODEC,
-                new DirectionalPayloadHandler<ItemStackPayload>(
-                        ClientItemStackPayloadHandler::handleDataOnNetwork,
-                        ServerItemStackPayloadHandler::handleDataOnNetwork
-                )
-        );
-        registrar.playBidirectional(
-                FormePlayerCooldownPayload.TYPE,
-                FormePlayerCooldownPayload.STREAM_CODEC,
-                new DirectionalPayloadHandler<FormePlayerCooldownPayload>(
-                        ClientFormePlayerCooldownPayloadHandler::handleDataOnNetwork,
-                        ServerFormePlayerCooldownPayloadHandler::handleDataOnNetwork
+        registrar.playToServer(ItemStackPayload.TYPE, ItemStackPayload.STREAM_CODEC, C2SItemStackPayloadHandler::handleDataOnNetwork);
+        registrar.playBidirectional(FormePlayerCooldownPayload.TYPE, FormePlayerCooldownPayload.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        S2CFormePlayerCooldownPayloadHandler::handleDataOnNetwork,
+                        C2SFormePlayerCooldownPayloadHandler::handleDataOnNetwork
                 )
         );
         registrar.playBidirectional(
                 FormeItemTimerPayload.TYPE,
                 FormeItemTimerPayload.STREAM_CODEC,
-                new DirectionalPayloadHandler<FormeItemTimerPayload>(
-                        ClientFormeItemTimerPayloadHandler::handleDataOnNetwork,
-                        ServerFormeItemTimerPayloadHandler::handleDataOnNetwork
+                new DirectionalPayloadHandler<>(
+                        S2CFormeItemTimerPayloadHandler::handleDataOnNetwork,
+                        C2SFormeItemTimerPayloadHandler::handleDataOnNetwork
                 )
         );
-        registrar.playToClient(BindingHashMapPayload.TYPE, BindingHashMapPayload.STREAM_CODEC, ClientBindingHashMapPayloadHandler::handleDataOnNetwork
+        registrar.playToClient(BindingsPayload.TYPE, BindingsPayload.STREAM_CODEC, S2CBindingsPayloadHandler::handleDataOnNetwork
         );
     }
 }

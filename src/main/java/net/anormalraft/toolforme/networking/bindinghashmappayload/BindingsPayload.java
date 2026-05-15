@@ -10,16 +10,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record BindingHashMapPayload(String formeItem, List<ItemStack> itemList) implements CustomPacketPayload {
+public record BindingsPayload(String formeItem, List<ItemStack> itemList) implements CustomPacketPayload {
 
-    public static final Type<BindingHashMapPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("toolforme", "bindinghashmappayload"));
+    public static final Type<BindingsPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("toolforme", "bindinghashmappayload"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, BindingHashMapPayload> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, BindingsPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
-            BindingHashMapPayload::formeItem,
+            BindingsPayload::formeItem,
             ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()),
-            BindingHashMapPayload::itemList,
-            BindingHashMapPayload::new
+            BindingsPayload::itemList,
+            BindingsPayload::new
     );
 
     @Override

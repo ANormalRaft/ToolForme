@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static net.anormalraft.toolforme.attachment.ModAttachments.FORMEITEMTIMER;
 
-public class ClientFormeItemTimerPayloadHandler {
+public class S2CFormeItemTimerPayloadHandler {
     public static void handleDataOnNetwork(final FormeItemTimerPayload formeItemTimerPayload, IPayloadContext context){
         // Do something with the data, on the main thread
         context.enqueueWork(() -> {
@@ -18,7 +18,7 @@ public class ClientFormeItemTimerPayloadHandler {
             if(player.getData(FORMEITEMTIMER) == 1){
                 ResourceLocation rl = ResourceLocation.tryParse("toolforme:down_sound");
                 SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
-                player.playSound(soundEvent, 0.7f, 1f);
+                player.playSound(soundEvent, 0.6f, 1f);
             }
             player.setData(FORMEITEMTIMER, formeItemTimerPayload.timerValue() - 1);
 //            System.out.println(player.getData(FORMEITEMTIMER));
