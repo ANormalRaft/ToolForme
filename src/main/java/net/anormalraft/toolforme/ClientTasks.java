@@ -1,5 +1,8 @@
 package net.anormalraft.toolforme;
 
+import com.alessandro.astages.AStages;
+import com.alessandro.astages.api.util.AStagesUtils;
+import com.alessandro.astages.infrastructure.integration.kubejs.util.KubeJSServerUtils;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.anormalraft.toolforme.component.ModDataComponents;
 import net.anormalraft.toolforme.networking.formeitemtimerpayload.FormeItemTimerPayload;
@@ -21,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
@@ -45,8 +49,8 @@ public class ClientTasks {
     public static ItemStack[] searchAndPrepareIfItemStackInConfig(ItemStack baseItemStack, Player player){
         //Data to add (the .copy() is important, or else you get stackoverflow)
         ModDataComponents.PreviousItemData previousItemData = new ModDataComponents.PreviousItemData(baseItemStack.copy());
-        //Array for containment purposes. Index 0 is for the base item. Index 1 is for Forme item. Index 2 is for a carrot that will hold the name of the detected incorrect string (if any) as its custom name
-        ItemStack[] itemStackArray = {baseItemStack, null, null};
+        //Array for containment purposes. Index 0 is for Forme item. Index 1 is for a carrot that will hold the name of the detected incorrect string (if any) as its custom name
+        ItemStack[] itemStackArray = {null, null};
 
         //Loop Config Map
         clientBindingsHashMap.forEach((key, itemArray) -> {
@@ -80,7 +84,7 @@ public class ClientTasks {
                     if(formeChangeItemStack.getCount() == 0 || formeChangeItemStack.getItem().toString().equals("minecraft:air")){
                         ItemStack errorItemStack = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("minecraft:carrot")).getDefaultInstance();
                         errorItemStack.set(DataComponents.CUSTOM_NAME, Component.literal(key));
-                        itemStackArray[2] = errorItemStack;
+                        itemStackArray[1] = errorItemStack;
                     } else {
                         formeChangeItemStack.set(DataComponents.CUSTOM_NAME, previousItemData.value().getComponents().get(DataComponents.CUSTOM_NAME));
                     }
@@ -89,7 +93,7 @@ public class ClientTasks {
                     formeChangeItemStack.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
 
                     //Shove it into the exported array
-                    itemStackArray[1] = formeChangeItemStack;
+                    itemStackArray[0] = formeChangeItemStack;
                 }
             }
         });
@@ -98,7 +102,7 @@ public class ClientTasks {
 
     //Helper Method that finds the corresponding item according to the config, puts it into the player's slot and attaches data components to the item and data attachments to the player to handle the timing of the item
     public static void switchBaseItemToToolFormeItem(ItemStack[] itemStackArray, Player player){
-        ItemStack formeChangeItem = itemStackArray[1].copy();
+        ItemStack formeChangeItem = itemStackArray[0].copy();
         //Make a sound
         ResourceLocation rl = ResourceLocation.tryParse("toolforme:up_sound");
         SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(rl);
@@ -123,22 +127,33 @@ public class ClientTasks {
         while (KEY_MAPPING.get().consumeClick()) {
             Player player = Minecraft.getInstance().player;
             if (player != null) {
-                ItemStack itemStack = player.getMainHandItem();
-                if (!itemStack.isEmpty()) {
-                    ItemStack[] itemStackArray = searchAndPrepareIfItemStackInConfig(itemStack, player);
-                    ItemStack baseItem = itemStackArray[0].copy();
+                ItemStack baseItemStack = player.getMainHandItem();
+                if (!baseItemStack.isEmpty()) {
+                    ItemStack[] itemStackArray = searchAndPrepareIfItemStackInConfig(baseItemStack, player);
                     //Check if the given base item isn't already a Forme item
-                    if (!baseItem.getComponents().has(PREVIOUS_ITEM_DATA.value())) {
-                        //Fires if the base Item wasn't found in the config
-                        if (itemStackArray[1] != null) {
+                    if (!baseItemStack.getComponents().has(PREVIOUS_ITEM_DATA.value())) {
+                        //Fires if the base Item was found in the config
+                        if (itemStackArray[0] != null) {
+
+                            //Gamestage check if AStages is present (config also need to be true)
+                            if(Config.ASTAGES_SEALING.get()) {
+                                if (ModList.get().isLoaded("astages")) {
+                                    String arbitraryToolformeStageName = itemStackArray[0].getItem().toString() + ":toolforme_stage";
+                                    if (!KubeJSServerUtils.playerHasStage(arbitraryToolformeStageName, player)) {
+                                        player.displayClientMessage(Component.literal("This item's Forme is sealed behind gamestage " + arbitraryToolformeStageName), true);
+                                        return;
+                                    }
+                                }
+                            }
+
                             //Check to impede softlock when dying. For some reason, the client FORMEITEMTIMER doesn't sync on death, while its server counterpart does, as well as the entirety of FORMEPLAYERCOOLDOWN. This 'if' statement takes the FORMEITEMTIMER out back, resets it to -1, and fires switchBaseItemToToolFormeItem
                             if(!(player.getData(FORMEPLAYERCOOLDOWN) == 0 && player.getData(FORMEITEMTIMER) == 0)) {
                                 if (player.getData(FORMEPLAYERCOOLDOWN) <= 0 && player.getData(FORMEITEMTIMER) == -1) {
                                     //Abort if Forme item doesn't exist + message
-                                    if(!(itemStackArray[1].getCount() == 0 || itemStackArray[1].getItem().toString().equals("minecraft:air"))){
+                                    if(!(itemStackArray[0].getCount() == 0 || itemStackArray[0].getItem().toString().equals("minecraft:air"))){
                                         switchBaseItemToToolFormeItem(itemStackArray, player);
                                     } else {
-                                        player.displayClientMessage(Component.literal("Forme Item id '" + itemStackArray[2].get(DataComponents.CUSTOM_NAME).getString() + "' doesn't exist!"), true);
+                                        player.displayClientMessage(Component.literal("Forme Item id '" + itemStackArray[1].get(DataComponents.CUSTOM_NAME).getString() + "' doesn't exist!"), true);
                                     }
 
                                 } else {

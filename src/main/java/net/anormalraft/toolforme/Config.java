@@ -27,6 +27,10 @@ public class Config {
             .comment("String that stores information about what Forme item (Item id) is applied to what base items (either RegEx or strictly formatted list). Follow the syntax of the default value closely. \nDefault:  \"{\\\"minecraft:trident\\\": \\\"shovel$\\\", \\\"minecraft:mace\\\": \\\"[minecraft:wooden_axe, minecraft:stone_axe, minecraft:golden_axe]\\\"}\"")
             .define("bindings", "{\"minecraft:trident\": \"shovel$\", \"minecraft:mace\": \"[minecraft:wooden_axe, minecraft:stone_axe, minecraft:golden_axe]\"}");
 
+    public static final ModConfigSpec.BooleanValue ASTAGES_SEALING = BUILDER
+            .comment("If true and if the mod AStages is present, then all Forme items will be sealed behind their own gamestages which are programmatically named <item_id:toolforme_stage> \nDefault: false")
+            .define("aStagesSealing", false);
+
     public static final ModConfigSpec.BooleanValue PLAYER_RESET_ON_DEATH = BUILDER
             .comment("Should the Forme item (if any) and both the player's timers be reset upon death? SHOULD REMAIN TRUE FOR NON-KEEPINVENTORY SETUPS (Ex: remain true if the Gravestones mod is present). \nDefault: true")
             .define("playerResetOnDeath", true);

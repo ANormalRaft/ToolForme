@@ -4,7 +4,7 @@ A mod that allows an item to momentarily become another. Inspired by the "empowe
 ## What it do tho?
  When the mod's keybind is pressed, if the item in the mainhand can be transformed, it shall change form:
 
-![Transformation gif](extras/toolforme_show.gif)
+[toolforme_show.webm](src/main/resources/toolforme_show.webm)
 
 (Here, the Item Timer and Player Cooldown values have been vastly reduced from the default for demonstrative purposes)
 
