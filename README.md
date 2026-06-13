@@ -33,31 +33,30 @@ Then, another timer called the *Player Cooldown* will end, allowing for the use 
 - Since the mod's Bindings config only handles item IDs without data components, there isn't a way to handle items that rely on data components to be properly uniquely defined; such as modular items
 
 ## Configanigans
-Here is what you can modify in the config:
 
-> Item Timer
->> The amount of time in ticks that the transformation should last
+Item Timer
+>The amount of time in ticks that the transformation should last
 
-> Player Cooldown
->>The amount of time in ticks that the player can activate the transformation ability again. Should always be higher than the Item Timer
+Player Cooldown
+>The amount of time in ticks that the player can activate the transformation ability again. Should always be higher than the Item Timer
 
-> Scaling (True by default) 
->> Whether or not to apply the mod's intended scaling formula. If false, the damage attribute of the *Forme item* will remain untouched. the Multiplier config will have no effect
+Scaling (True by default) 
+> Whether or not to apply the mod's intended scaling formula. If false, the damage attribute of the *Forme item* will remain untouched. the Multiplier config will have no effect
 
->Multiplier (Default: x1.25)
->> The multiplier used in the scaling formula
+Multiplier (Default: x1.25)
+>The multiplier used in the scaling formula
 
->Bindings
->> These are the specifications of what *Forme item* should be bound to what base items. Two formats exist: Regex and "super specific string that is formatted like a list" (see details in the actual config). Multiple base items can be bound to a *Forme item*
+Bindings
+>These are the specifications of what *Forme item* should be bound to what base items. Two formats exist: Regex and "super specific string that is formatted like a list" (see details in the actual config). Multiple base items can be bound to a *Forme item*
 
-> Death Reset (Enabled by default)
->> If both the Item Timer and the Player Cooldown should be reset, as well as if the *Forme item* (if any) should be reverted to its base form upon player death
+Death Reset (Enabled by default)
+>If both the Item Timer and the Player Cooldown should be reset, as well as if the *Forme item* (if any) should be reverted to its base form upon player death
 
-> Loyalty Cooldowns
->> In order to keep a thrown *Forme item* trident within its slot, I opted to use the technique used by Combat+ (https://modrinth.com/mod/combatplus-core)'s `keepLoyaltyTridents` functionality, but made the thrown trident cooldown configurable
+Loyalty Cooldowns
+>In order to keep a thrown *Forme item* trident within its slot, I opted to use the technique used by Combat+ (https://modrinth.com/mod/combatplus-core)'s `keepLoyaltyTridents` functionality, but made the thrown trident cooldown configurable
 
->AStages Sealing (False by default)
->> If the mod AStages is present and if this is true, all *Formes* will be locked behind their own stage programmatically set as the string "(mod):(item):toolforme_stage"
+AStages Sealing (False by default)
+>If the mod AStages is present and if this is true, all *Formes* will be locked behind their own stage programmatically set as the string "(mod):(item):toolforme_stage"
 
-> Riptide fix (Disabled by default)
->> Imagine having a trident that allows having Riptide and Loyalty at the same time. Riptide when you're in water, throw that thang when not in water. Unfortunately, I cannot provide the datapack that slaps some sense into the riptide component data to allow it to coexist with loyalty without making it non-disable-able, but I can make riptide tridents throwable :)) (that's what it does)
+Riptide fix (Disabled by default)
+>Imagine having a trident that allows having Riptide and Loyalty at the same time. Riptide when you're in water, throw that thang when not in water. Unfortunately, I cannot provide the datapack that slaps some sense into the riptide component data to allow it to coexist with loyalty without making it non-disable-able, but I can make riptide tridents throwable :)) (that's what it does)
